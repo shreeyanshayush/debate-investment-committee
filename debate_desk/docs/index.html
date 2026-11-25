@@ -1,0 +1,854 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Debate-Driven Investment Committee</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout concept: a committee minute book. One column of ruled sections, with a two-sided ledger (Bull | Bear) at the centre
+   and a judge/risk pair beneath it. Blue = Bull, orange = Bear, ink = Judge, violet = Risk. Verdict colours are semantic only. */
+:root{
+  --bg:#f1f4f8; --surface:#ffffff; --surface2:#e8edf5; --ink:#0f1a2b; --muted:#546177; --rule:#d3dae6; --rule2:#b9c3d4;
+  --bull:#1a5fd0; --bull-soft:#e4edfd; --bear:#b84d06; --bear-soft:#fde9d8; --judge:#1c2a44; --risk:#6a3fc2; --risk-soft:#ece6fa;
+  --good:#13795b; --good-soft:#dcf2ea; --warn:#8f5f00; --warn-soft:#fbefc9; --bad:#b3261e; --bad-soft:#fbe3e0;
+  --s1:#8392ab; --s2:#1a5fd0;
+  --font-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --font-body:"IBM Plex Sans","Segoe UI",system-ui,-apple-system,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0c121b; --surface:#141c28; --surface2:#1b2535; --ink:#e7edf6; --muted:#9aa8bd; --rule:#28344a; --rule2:#3a4966;
+  --bull:#7aa9ff; --bull-soft:#14263f; --bear:#ff9d55; --bear-soft:#3a2412; --judge:#c9d6ee; --risk:#b59cff; --risk-soft:#261c44;
+  --good:#46c493; --good-soft:#11322a; --warn:#e8b84a; --warn-soft:#3a2f10; --bad:#ff7a70; --bad-soft:#3d1916;
+  --s1:#6b7a94; --s2:#7aa9ff; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0c121b; --surface:#141c28; --surface2:#1b2535; --ink:#e7edf6; --muted:#9aa8bd; --rule:#28344a; --rule2:#3a4966;
+  --bull:#7aa9ff; --bull-soft:#14263f; --bear:#ff9d55; --bear-soft:#3a2412; --judge:#c9d6ee; --risk:#b59cff; --risk-soft:#261c44;
+  --good:#46c493; --good-soft:#11322a; --warn:#e8b84a; --warn-soft:#3a2f10; --bad:#ff7a70; --bad-soft:#3d1916;
+  --s1:#6b7a94; --s2:#7aa9ff; color-scheme:dark}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--font-display);line-height:1.12;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.3rem,5.4vw,3.9rem);font-weight:800;letter-spacing:-.025em}
+h2{font-size:clamp(1.55rem,3vw,2.15rem);font-weight:700;letter-spacing:-.018em}
+h3{font-size:1.05rem;font-weight:700;letter-spacing:-.005em}
+p{margin:0}
+a{color:var(--bull)}
+code,.mono{font-family:var(--font-mono);font-size:.88em}
+.eyebrow{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--bull);outline-offset:2px;border-radius:4px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:10px}
+.brand{font-family:var(--font-display);font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.top nav{display:flex;gap:4px;overflow-x:auto;min-width:0}
+.top nav a{color:var(--muted);text-decoration:none;font-size:.88rem;padding:6px 10px;border-radius:6px;white-space:nowrap}
+.top nav a:hover{background:var(--surface2);color:var(--ink)}
+
+/* hero */
+.hero{padding-block:clamp(36px,6vw,72px) clamp(28px,4vw,48px)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:clamp(24px,5vw,56px);align-items:center}
+.hero p.lede{font-size:clamp(1.05rem,1.8vw,1.28rem);color:var(--muted);margin-top:18px;max-width:34em}
+.hero .tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.tag{font-family:var(--font-mono);font-size:.76rem;border:1px solid var(--rule2);border-radius:999px;padding:3px 10px;color:var(--muted)}
+.facts-line{margin-top:24px;color:var(--muted);font-size:.92rem;display:flex;flex-wrap:wrap;gap:6px 22px}
+.facts-line b{color:var(--ink);font-weight:600}
+
+.strip{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:18px;display:grid;gap:12px;box-shadow:0 1px 0 var(--rule)}
+.strip .cap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.strip .row{display:grid;grid-template-columns:84px minmax(0,1fr);gap:12px;align-items:center;padding-top:12px;border-top:1px solid var(--rule)}
+.strip .who{font-family:var(--font-mono);font-size:.74rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.strip .what{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:.92rem}
+.strip .final{background:var(--warn-soft);border-radius:10px;padding:12px;border:1px solid var(--rule)}
+
+/* chips and pills */
+.chip{display:inline-flex;align-items:center;font-family:var(--font-display);font-weight:800;letter-spacing:.06em;font-size:.82rem;padding:3px 10px;border-radius:6px;border:1.5px solid currentColor;white-space:nowrap}
+.chip.BUY{color:var(--good);background:var(--good-soft)}
+.chip.HOLD{color:var(--warn);background:var(--warn-soft)}
+.chip.AVOID{color:var(--bad);background:var(--bad-soft)}
+.pill{display:inline-block;font-size:.76rem;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap}
+.pill.bad{color:var(--bad);background:var(--bad-soft)}
+.pill.warn{color:var(--warn);background:var(--warn-soft)}
+.pill.good{color:var(--good);background:var(--good-soft)}
+.pill.na{color:var(--muted);background:var(--surface2)}
+.cite{font-family:var(--font-mono);font-size:.74rem;background:var(--surface2);color:var(--ink);border:1px solid var(--rule2);border-radius:5px;padding:1px 6px;cursor:pointer;margin:0 2px;line-height:1.5}
+.cite:hover,.cite[aria-expanded="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* sections */
+section.s{padding-block:clamp(36px,5vw,64px);border-top:1px solid var(--rule)}
+.s-head{display:grid;gap:10px;margin-bottom:26px;max-width:46em}
+.s-head p{color:var(--muted)}
+
+/* stages */
+.stages{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;counter-reset:st}
+.stg{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px;display:grid;gap:6px;align-content:start}
+.stg .n{font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.stg p{font-size:.88rem;color:var(--muted);line-height:1.5}
+.stg code{color:var(--ink);font-size:.76rem;overflow-wrap:anywhere}
+.stg.par{border-style:dashed}
+.roster{margin-top:16px;overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface2)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{font-variant-numeric:tabular-nums}
+
+/* demo */
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{border:1px solid var(--rule2);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:500;font-size:.92rem}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.demo-bar{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-top:14px}
+.demo-bar p{color:var(--muted);max-width:46em;font-size:.95rem}
+.btn{border:1px solid var(--rule2);background:var(--surface);border-radius:8px;padding:7px 14px;cursor:pointer;font-size:.88rem;font-weight:500}
+.btn:hover{background:var(--surface2)}
+.btn:disabled{opacity:.5;cursor:default}
+.demo{margin-top:18px;display:grid;gap:22px}
+.stage{display:grid;gap:12px}
+.stage>h3{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.stage>h3 small{font-family:var(--font-mono);font-weight:400;font-size:.74rem;color:var(--muted);letter-spacing:.04em}
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.col{display:grid;gap:10px;align-content:start;min-width:0}
+.colhead{font-family:var(--font-display);font-weight:700;display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-bottom:6px;border-bottom:3px solid var(--c)}
+.colhead span{font-family:var(--font-mono);font-weight:400;font-size:.72rem;color:var(--muted)}
+.bull{--c:var(--bull)} .bear{--c:var(--bear)}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px;display:grid;gap:9px;min-width:0;position:relative}
+.claim{border-left:4px solid var(--c)}
+.claim .t{font-size:.94rem}
+.claim .meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.best{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--c)}
+.wbar{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.wbar .tr{height:7px;background:var(--surface2);border-radius:4px;position:relative;overflow:hidden}
+.wbar .tr i{position:absolute;inset:0 auto 0 0;background:var(--c);border-radius:4px}
+.wbar .tr b{position:absolute;inset:0 auto 0 0;background:var(--c);opacity:.25;border-radius:4px}
+.reb{border-left:4px solid var(--c)}
+.reb h4{margin:0;font-family:var(--font-display);font-size:.95rem}
+.reb .t{font-size:.92rem}
+.reb .eff{font-family:var(--font-mono);font-size:.74rem;color:var(--muted)}
+.concede{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--bad)}
+.factbox{display:grid;gap:8px}
+.factbox:empty{display:none}
+.fact{background:var(--surface2);border-radius:8px;padding:9px 11px;font-size:.84rem;display:grid;gap:3px;border-left:3px solid var(--rule2)}
+.fact.p1{border-left-color:var(--bull)} .fact.p-1{border-left-color:var(--bear)}
+.fact .h{font-family:var(--font-mono);font-size:.7rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 12px}
+.fact .h b{color:var(--ink);font-weight:500}
+details.unc{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:10px 14px}
+details.unc summary{cursor:pointer;font-weight:500;font-size:.92rem}
+details.unc .list{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+
+.judge-card{border-top:4px solid var(--judge)}
+.risk-card{border-top:4px solid var(--risk)}
+.jtop{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.conf{font-family:var(--font-mono);font-size:.78rem;color:var(--muted)}
+.rat{font-size:.93rem}
+.track{position:relative;height:26px;border-radius:6px;overflow:hidden;background:linear-gradient(90deg,var(--bad-soft) 0 42.5%,var(--warn-soft) 42.5% 57.5%,var(--good-soft) 57.5% 100%);border:1px solid var(--rule)}
+.track .dot{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--ink);transform:translate(-50%,-50%);border:2px solid var(--surface)}
+.zones{display:grid;grid-template-columns:42.5% 15% 42.5%;font-family:var(--font-mono);font-size:.68rem;color:var(--muted);margin-top:4px}
+.zones span:nth-child(2){text-align:center}.zones span:nth-child(3){text-align:right}
+.totals{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:.76rem;color:var(--muted);gap:8px;flex-wrap:wrap}
+.totals b.b{color:var(--bull)}.totals b.r{color:var(--bear)}
+.note{font-size:.82rem;color:var(--muted)}
+.meter{position:relative;height:12px;background:var(--surface2);border-radius:6px}
+.meter i{position:absolute;inset:0 auto 0 0;border-radius:6px;background:var(--risk);transition:width .25s}
+.meter.over i{background:var(--bad)}
+.meter .tick{position:absolute;left:60%;top:-4px;bottom:-4px;width:2px;background:var(--ink)}
+.scoreline{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font-size:.88rem}
+.lims{display:grid;gap:12px}
+.lim{display:grid;gap:5px;padding-top:10px;border-top:1px solid var(--rule)}
+.lim .l1{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.lim .l1 strong{font-weight:600;font-size:.9rem}
+.lim .l2{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}
+.lim .obs{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+input[type=range]{width:100%;accent-color:var(--risk);margin:0}
+output{font-family:var(--font-mono);font-size:.8rem;min-width:5.2em;text-align:right}
+.opt{display:flex;align-items:center;gap:8px;font-size:.84rem;color:var(--muted)}
+.decision{background:var(--surface);border:1px solid var(--rule2);border-radius:14px;padding:18px;display:grid;gap:12px;position:relative;overflow:hidden}
+.flow{display:flex;align-items:stretch;gap:10px;flex-wrap:wrap}
+.step{display:grid;gap:6px;align-content:start;background:var(--surface2);border-radius:10px;padding:10px 14px;min-width:132px}
+.step .k{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.arrow{align-self:center;color:var(--muted);font-family:var(--font-mono)}
+.step.fin{border:2px solid var(--ink);background:var(--surface)}
+.why{font-size:.95rem;max-width:52em}
+.stamp{position:absolute;right:18px;top:14px;transform:rotate(-7deg);border:3px solid var(--bad);color:var(--bad);font-family:var(--font-display);font-weight:800;letter-spacing:.16em;text-transform:uppercase;padding:2px 12px;border-radius:6px;font-size:1.05rem;pointer-events:none;opacity:.92}
+
+/* results chart */
+.chartbox{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:18px;display:grid;gap:16px}
+.legend{display:flex;gap:18px;flex-wrap:wrap;font-size:.84rem;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.crow{display:grid;gap:6px}
+.crow .hd{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:.9rem}
+.crow .hd span{font-family:var(--font-mono);font-size:.76rem;color:var(--muted)}
+#chart{--za:45.83%;--zb:70.83%}
+.ctrack{position:relative;height:44px;border-radius:6px;border:1px solid var(--rule);background:linear-gradient(90deg,var(--bad-soft) 0 var(--za),var(--warn-soft) var(--za) var(--zb),var(--good-soft) var(--zb) 100%);transition:background .2s}
+.ctrack .z{position:absolute;top:0;bottom:0;width:1px;background:var(--ink);opacity:.5}
+.ctrack .bar{position:absolute;height:15px;border-radius:3px}
+.axis{position:relative;height:18px;font-family:var(--font-mono);font-size:.68rem;color:var(--muted)}
+.axis span{position:absolute;transform:translateX(-50%)}
+.zonelab{display:grid;grid-template-columns:var(--za) calc(var(--zb) - var(--za)) calc(100% - var(--zb));font-family:var(--font-mono);font-size:.68rem;color:var(--muted)}
+.zonelab span:nth-child(2){text-align:center}.zonelab span:nth-child(3){text-align:right}
+
+/* guardrails */
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.rule{background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;gap:6px;align-content:start}
+.rule p{color:var(--muted);font-size:.92rem}
+.rule code{color:var(--ink)}
+.try{margin-top:22px;background:var(--surface);border:1px solid var(--rule2);border-radius:14px;padding:18px;display:grid;gap:12px}
+.try .fields{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px}
+label{font-size:.8rem;font-weight:600;display:grid;gap:5px}
+textarea,input[type=text]{font:inherit;font-size:.92rem;background:var(--bg);color:var(--ink);border:1px solid var(--rule2);border-radius:8px;padding:9px 11px;width:100%;resize:vertical}
+.ex{display:flex;gap:8px;flex-wrap:wrap}
+.res{display:grid;gap:6px}
+.res .line{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;font-size:.9rem}
+.verdictbox{border-radius:10px;padding:12px 14px;font-size:.92rem}
+.verdictbox.ok{background:var(--good-soft)}.verdictbox.no{background:var(--bad-soft)}
+
+.tests{display:grid;gap:10px;max-width:46em}
+.trow{display:grid;grid-template-columns:150px minmax(0,1fr) 28px;gap:12px;align-items:center;font-size:.9rem}
+.trow .tr{height:10px;background:var(--surface2);border-radius:5px;overflow:hidden}
+.trow .tr i{display:block;height:100%;background:var(--judge);border-radius:5px}
+.trow b{font-family:var(--font-mono);font-weight:500;text-align:right}
+
+/* run it */
+.codegrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.code{background:#0f1726;color:#e6edf7;border-radius:12px;position:relative;min-width:0}
+.code .lab{font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:#93a4bf;padding:12px 14px 0}
+.code pre{margin:0;padding:8px 14px 14px;overflow-x:auto;font-family:var(--font-mono);font-size:.8rem;line-height:1.65}
+.code .copy{position:absolute;right:10px;top:8px;background:#1d2a44;color:#e6edf7;border:1px solid #33425f;border-radius:6px;padding:3px 10px;font-size:.74rem;cursor:pointer}
+.code .copy:hover{background:#26365a}
+footer{border-top:1px solid var(--rule);padding-block:28px 40px;color:var(--muted);font-size:.88rem}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+[hidden]{display:none!important}
+/* motion */
+.progress{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--bull)}
+.top nav a[aria-current="true"]{color:var(--ink);background:var(--surface2)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+@keyframes pop{0%{transform:scale(.55);opacity:0}60%{transform:scale(1.14);opacity:1}100%{transform:scale(1)}}
+@keyframes growx{from{transform:scaleX(0)}}
+@keyframes dotslide{from{left:50%}}
+@keyframes slam{from{opacity:0;transform:rotate(-7deg) scale(2.6)}55%{opacity:1;transform:rotate(-7deg) scale(.92)}to{transform:rotate(-7deg) scale(1)}}
+@keyframes flip{from{transform:rotateX(90deg);opacity:0}}
+@keyframes glow{from{box-shadow:0 0 0 0 color-mix(in srgb,var(--warn) 55%,transparent)}to{box-shadow:0 0 0 14px transparent}}
+.hero h1 .w{display:inline-block;animation:rise .75s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i)*110ms)}
+.hero .eyebrow,.hero p.lede,.hero .tags,.hero .facts-line{animation:rise .7s cubic-bezier(.2,.7,.2,1) backwards}
+.hero p.lede{animation-delay:.4s}.hero .tags{animation-delay:.55s}.hero .facts-line{animation-delay:.7s}
+.strip.play .r1{animation:rise .5s .35s backwards}
+.strip.play .r2{animation:rise .5s 1.1s backwards}
+.strip.play .r3{animation:rise .5s 1.9s backwards,glow 1s 2.3s}
+.strip.play .r1 .chip{animation:pop .45s .6s backwards}
+.strip.play .r2 .pill{animation:pop .45s 1.35s backwards}
+.strip.play .r3 .chip{animation:pop .5s 2.2s backwards}
+.btn.sm{padding:3px 10px;font-size:.74rem}
+.pop{animation:pop .4s backwards}
+.chip.flip{animation:flip .4s backwards}
+.stamp.slam{animation:slam .55s cubic-bezier(.2,1.5,.4,1) backwards}
+.chip.sm{font-size:.66rem;padding:1px 6px;letter-spacing:.04em;border-width:1px}
+.btn,.tab,.cite,.sp,.stg{transition:background .15s,color .15s,border-color .15s,transform .15s,box-shadow .2s}
+.btn:active,.tab:active{transform:scale(.97)}
+.rule:hover,.stg:hover{transform:translateY(-2px);box-shadow:0 8px 22px color-mix(in srgb,var(--ink) 10%,transparent)}
+.claim:hover{transform:translateX(2px)}
+.claim{transition:transform .15s}
+.stage{scroll-margin-top:72px}
+.enter>h3{animation:rise .4s backwards}
+.enter .card,.enter .decision{animation:rise .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*80ms + 80ms)}
+.enter .tr i,.enter .tr b,.enter .meter i{transform-origin:left;animation:growx .85s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*80ms + 320ms)}
+.enter .dot{animation:dotslide 1.1s cubic-bezier(.3,.7,.2,1) .5s backwards}
+
+/* stepper */
+.ctl{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{background:var(--ink);opacity:.9}
+.stepper{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+.sp{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule2);background:var(--surface);border-radius:999px;padding:5px 14px 5px 6px;cursor:pointer;font-size:.86rem}
+.sp .d{display:grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--surface2);font-family:var(--font-mono);font-size:.72rem}
+.sp.done .d{background:var(--ink);color:var(--bg)}
+.sp[aria-current="step"]{border-color:var(--ink);box-shadow:0 0 0 2px color-mix(in srgb,var(--ink) 18%,transparent)}
+.sp:hover{background:var(--surface2)}
+
+/* pipeline */
+.pipe-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}
+.pipe-bar{height:4px;background:var(--surface2);border-radius:2px;margin-bottom:14px;overflow:hidden}
+.pipe-bar i{display:block;height:100%;width:20%;background:var(--bull);border-radius:2px;transition:width .5s cubic-bezier(.2,.7,.2,1)}
+button.stg{font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%}
+button.stg .d{font-size:.88rem;color:var(--muted);line-height:1.5;display:block}
+button.stg code{display:block}
+.stg[aria-pressed="true"]{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink) inset}
+.pipe-detail{margin-top:14px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:16px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;animation:rise .35s backwards}
+.pipe-detail h4{margin:0 0 4px;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pipe-detail p{font-size:.92rem}
+.pipe-title{grid-column:1/-1;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+
+/* sensitivity, tests, preview */
+.sens{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.vals{display:inline-flex;gap:6px;align-items:center;flex-wrap:wrap}
+.titem{border-bottom:1px solid var(--rule)}
+button.trow{background:none;border:0;padding:8px 0;text-align:left;cursor:pointer;width:100%;color:inherit}
+button.trow:hover b{color:var(--bull)}
+.trow .tr i{transform-origin:left}
+.tdetail{font-size:.88rem;color:var(--muted);padding:0 0 10px 162px;max-width:46em;animation:rise .3s backwards}
+mark{border-radius:3px;padding:0 3px;color:inherit;background:var(--surface2)}
+mark.g{background:var(--good-soft);color:var(--good);font-weight:600}
+mark.b{background:var(--bad-soft);color:var(--bad);font-weight:600;text-decoration:underline wavy}
+.preview{font-size:.95rem}
+@media (max-width:760px){.pipe-detail{grid-template-columns:minmax(0,1fr)}.tdetail{padding-left:0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+@media (max-width:900px){.stages{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-grid{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:760px){.two,.rules,.codegrid,.try .fields{grid-template-columns:minmax(0,1fr)}.trow{grid-template-columns:110px minmax(0,1fr) 24px}.top nav a:nth-child(n+4){display:none}}
+@media (max-width:520px){.stages{grid-template-columns:minmax(0,1fr)}.stamp{position:static;transform:none;justify-self:start}.flow{flex-direction:column;align-items:stretch}.flow .arrow{display:none}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.meter i{transition:none}}
+</style>
+</head>
+<body>
+
+
+<header class="top"><div class="wrap">
+  <div class="brand">Investment Committee</div>
+  <nav aria-label="Sections"><a href="#how">How it works</a><a href="#demo">Watch a debate</a><a href="#results">Results</a><a href="#rules">Rules</a><a href="#run">Run it</a></nav>
+</div><div class="progress" id="progress"></div></header>
+
+<main>
+<div class="wrap">
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow">Multi-agent system · Semantic Kernel · Python</div>
+      <h1 style="margin-top:14px"><span class="w" style="--i:0">Debate-Driven</span> <span class="w" style="--i:1">Investment</span> <span class="w" style="--i:2">Committee</span></h1>
+      <p class="lede">Two agents argue for and against an asset. A judge rules using only the facts they cited. A risk officer can still overrule a BUY.</p>
+      <div class="tags"><span class="tag">Research</span><span class="tag">Bull</span><span class="tag">Bear</span><span class="tag">Rebuttal</span><span class="tag">Judge</span><span class="tag">Risk veto</span></div>
+      <div class="facts-line"><span><b>6</b> agents, one module each</span><span><b>3</b> synthetic assets</span><span><b>26</b> passing tests</span><span><b>0</b> citation violations in live runs</span></div>
+    </div>
+    <aside class="strip play" id="strip" aria-label="Example outcome">
+      <div class="cap"><div class="eyebrow">Example: Verdant Mobility</div><button class="btn sm" id="strip-replay" type="button">Replay</button></div>
+      <div class="row r1"><div class="who">Judge</div><div class="what"><span class="chip BUY">BUY</span><span>revenue +94%, margin up, cheap versus peers. Margin +0.257</span></div></div>
+      <div class="row r2"><div class="who">Risk</div><div class="what"><span class="pill bad">Veto</span><span>largest customer is 56% of revenue, limit is 50%</span></div></div>
+      <div class="row final r3"><div class="who">Final</div><div class="what"><span class="chip HOLD">HOLD</span><span>the veto overrides the Judge</span></div></div>
+    </aside>
+  </div>
+</section>
+</div>
+
+<section class="s" id="how"><div class="wrap">
+  <div class="s-head"><div class="eyebrow">Architecture</div><h2>How a debate runs</h2>
+  <p>All agents read from and write to one shared fact sheet. Each fact has an ID, a theme, a direction (bullish, bearish or neutral) and a strength, and every argument has to point back to those IDs.</p></div>
+  <div class="pipe-head"><span class="note">Select a step to see what goes in, what comes out and what the code enforces.</span><button class="btn" type="button" id="pipe-play">Play the flow</button></div>
+  <div class="pipe-bar" aria-hidden="true"><i id="pipe-fill"></i></div>
+  <div class="stages" id="pipe-cards"></div>
+  <div class="pipe-detail" id="pipe-detail" aria-live="polite"></div>
+  <div class="roster" style="margin-top:18px"><table>
+    <thead><tr><th>Agent</th><th>Job</th><th>Search tool in live mode</th></tr></thead>
+    <tbody>
+      <tr><td>Research</td><td>Assembles and rates the facts from the document set</td><td>Yes</td></tr>
+      <tr><td>Bull and Bear</td><td>Argue their side, every claim citing fact IDs</td><td>Yes</td></tr>
+      <tr><td>Rebuttal round</td><td>One cited reply per side to the opponent's strongest point</td><td>Yes</td></tr>
+      <tr><td>Judge</td><td>Weighs both cases and issues BUY, HOLD or AVOID with reasons</td><td><b>No</b></td></tr>
+      <tr><td>Risk</td><td>Tests the whole fact sheet against stated limits and holds one veto</td><td><b>No</b></td></tr>
+    </tbody></table></div>
+</div></section>
+
+<section class="s" id="demo"><div class="wrap">
+  <div class="s-head"><div class="eyebrow">Interactive replay</div><h2>Watch a debate</h2>
+  <p>These are the real transcripts from the offline runs. Tap any fact ID to read the fact behind it. In the Risk panel, move a limit and the veto recalculates with the same rules the code uses.</p></div>
+  <div class="tabs" role="tablist" aria-label="Scenario" id="tabs"></div>
+  <div class="demo-bar"><p id="blurb"></p><div class="ctl"><button class="btn primary" id="play" type="button">Play the debate</button><button class="btn" id="next" type="button">Next step</button><button class="btn" id="all" type="button">Show all</button></div></div>
+  <div class="stepper" id="stepper" role="group" aria-label="Debate stage"></div>
+  <div class="demo" id="demo-body"></div>
+</div></section>
+
+<section class="s" id="results"><div class="wrap">
+  <div class="s-head"><div class="eyebrow">Evaluation</div><h2>Both backends reach the same answers</h2>
+  <p>Every scenario ran twice: once on the offline rule-based backend and once live through Semantic Kernel with a Gemini model. The scorecard margins differ because the live model rates facts more decisively, but they land in the same zone each time, so every final recommendation matches.</p></div>
+  <div class="chartbox">
+    <div class="legend"><span><i style="background:var(--s1)"></i>Offline backend</span><span><i style="background:var(--s2)"></i>Live, Gemini through Semantic Kernel</span></div>
+    <div class="sens"><label for="thr" style="display:flex;gap:10px;align-items:center;font-weight:600;flex-wrap:wrap">What if the decision margin were <input type="range" id="thr" min="0.05" max="0.5" step="0.01" value="0.15" style="width:180px"><output id="thr-out" style="min-width:3.6em;text-align:left">&plusmn;0.15</output></label><button class="btn" type="button" id="thr-reset">Reset</button></div>
+    <p class="note" id="thr-note" aria-live="polite"></p>
+    <div id="chart" style="display:grid;gap:14px"></div>
+    <p class="note">Margin = (Bull evidence - Bear evidence) divided by their sum. At or above +0.15 the scorecard says BUY; at or below -0.15 it says AVOID.</p>
+  </div>
+  <div class="roster" style="margin-top:16px"><table>
+    <thead><tr><th>Run</th><th>Judge</th><th class="num">Risk score (offline / live)</th><th>Veto</th><th>Final</th></tr></thead>
+    <tbody>
+      <tr><td>Helios Renewables</td><td><span class="chip BUY">BUY</span></td><td class="num">0 / 10</td><td>No</td><td><span class="chip BUY">BUY</span></td></tr>
+      <tr><td>Verdant Mobility</td><td><span class="chip BUY">BUY</span></td><td class="num">30 / 45</td><td>Largest customer 56% vs 50% limit</td><td><span class="chip HOLD">HOLD</span></td></tr>
+      <tr><td>Ironbridge Retail</td><td><span class="chip AVOID">AVOID</span></td><td class="num">30 / 30</td><td>No</td><td><span class="chip AVOID">AVOID</span></td></tr>
+      <tr><td>Helios, leverage limit 1.0x</td><td><span class="chip BUY">BUY</span></td><td class="num">30 / 40</td><td>Leverage 1.4x vs 1.0x limit</td><td><span class="chip HOLD">HOLD</span></td></tr>
+    </tbody></table></div>
+  <p class="note" style="margin-top:12px">The companies and figures are synthetic and made for this demonstration. Each live scenario was run once, and live model output varies a little between runs. This is not investment advice.</p>
+</div></section>
+
+<section class="s" id="rules"><div class="wrap">
+  <div class="s-head"><div class="eyebrow">Guardrails</div><h2>Rules the code enforces</h2>
+  <p>None of these depend on a prompt. They are checks in the program, so they still hold when a language model gets something wrong. A failed check never crashes a run: the item is dropped and written to an audit log.</p></div>
+  <div class="rules">
+    <div class="rule"><h3>Every claim must cite</h3><p>A claim with no citation, an unknown fact ID, or a number that is not in the cited fact is dropped and logged.</p></div>
+    <div class="rule"><h3>The Judge only sees cited facts</h3><p>Its input holds just the facts the debaters cited, it has no search tool, and any other ID it produces is stripped. In the Helios run it saw 9 of 16 facts.</p></div>
+    <div class="rule"><h3>The veto is rule-based</h3><p>Risk tests the whole fact sheet against stated limits and hard-flag disclosures. A model may write the narrative but cannot add or remove a veto.</p></div>
+    <div class="rule"><h3>Risk is independent of the Judge</h3><p>Risk limits never change how facts are rated for the Judge, so a veto cannot be built into the verdict in advance. A test caught this flaw during development.</p></div>
+  </div>
+  <div class="try">
+    <div><h3>Try to break the citation rule</h3><p class="note" style="margin-top:4px">This runs the same three checks on the Verdant document set. Pick an example or write your own claim.</p></div>
+    <div class="ex" id="examples"></div>
+    <div class="fields">
+      <label for="claim">Claim<textarea id="claim" rows="2"></textarea></label>
+      <label for="cites">Cited fact IDs (separated by commas)<input id="cites" type="text" autocomplete="off" spellcheck="false"></label>
+    </div>
+    <p class="preview" id="preview" aria-live="polite"></p>
+    <div class="res" id="check-out" aria-live="polite"></div>
+  </div>
+  <div style="margin-top:34px" class="s-head"><h3>26 tests keep the rules honest</h3><p class="note">Select a row to see what it checks.</p></div>
+  <div class="tests" id="tests"></div>
+</div></section>
+
+<section class="s" id="run"><div class="wrap">
+  <div class="s-head"><div class="eyebrow">Get started</div><h2>Run it yourself</h2>
+  <p>The offline backend needs no API key. For a live run, set a key for OpenAI, Azure OpenAI or Google Gemini and add <code>--backend sk</code>.</p></div>
+  <div class="codegrid">
+    <div class="code"><div class="lab">Windows PowerShell</div><button class="copy" type="button">Copy</button><pre>python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+python run_debate.py data/verdant --backend offline
+pytest tests -q</pre></div>
+    <div class="code"><div class="lab">macOS or Linux</div><button class="copy" type="button">Copy</button><pre>python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python run_debate.py data/verdant --backend offline
+pytest tests -q</pre></div>
+    <div class="code"><div class="lab">Live model (PowerShell)</div><button class="copy" type="button">Copy</button><pre>$env:GEMINI_API_KEY="your-key"
+$env:GEMINI_MODEL="gemini-3.5-flash-lite"
+python run_debate.py data/verdant --backend sk</pre></div>
+    <div class="code"><div class="lab">Try the veto</div><button class="copy" type="button">Copy</button><pre>python run_debate.py data/helios --backend sk --limit leverage_x=1.0</pre></div>
+  </div>
+  <p class="note" style="margin-top:14px">Every run writes a Markdown report and a JSON record with the recommendation, the strongest argument on each side, the Judge's rationale, the Risk review, the scorecard, the full transcript and the audit log.</p>
+</div></section>
+</main>
+
+<footer><div class="wrap"><span>Debate-Driven Investment Committee · project by Shreeyansh Ayush</span><span>Synthetic data. Not investment advice.</span></div></footer>
+
+<script type="application/json" id="site-data">{"helios":{"asset":"Helios Renewables Ltd","facts":[{"id":"HEL-01","text":"Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25%.","source":"annual_report.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"HEL-02","text":"Operating margin expanded to 17.8% from 14.2% as module costs fell and the second automated assembly line reached full output.","source":"annual_report.md","theme":"profitability","polarity":1,"strength":1.5,"metrics":{},"cited":false},{"id":"HEL-03","text":"Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year.","source":"annual_report.md","theme":"profitability","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"HEL-04","text":"Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility.","source":"annual_report.md","theme":"balance_sheet","polarity":1,"strength":1.5,"metrics":{"leverage_x":1.4},"cited":true},{"id":"HEL-05","text":"Cash and undrawn credit lines total $640 million, equivalent to 34 months of runway at the current investment pace.","source":"annual_report.md","theme":"balance_sheet","polarity":1,"strength":1.5,"metrics":{"runway_months":34.0},"cited":false},{"id":"HEL-06","text":"Contracted backlog reached a record $5.1 billion, roughly 1.8 times trailing revenue.","source":"annual_report.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":false},{"id":"HEL-07","text":"The largest customer accounted for 18% of revenue; no other customer exceeded 10%.","source":"annual_report.md","theme":"customers","polarity":1,"strength":1.0,"metrics":{"customer_concentration_pct":18.0},"cited":false},{"id":"HEL-08","text":"The shares trade at 19 times forward earnings, a discount to the sector median of 24 times despite faster growth.","source":"market_notes.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-09","text":"The consensus price target of $48 implies about 22% upside from the current share price of $39.40.","source":"market_notes.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":false},{"id":"HEL-10","text":"Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%.","source":"market_notes.md","theme":"valuation","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-11","text":"Chinese module makers continue to cut prices; average selling prices fell 11% this year and management warned that further declines could compress margins.","source":"market_notes.md","theme":"competition","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-12","text":"A new patented cell architecture lifted module efficiency to 24.6%, about 1.5 points above the closest rival, and is already in volume production.","source":"market_notes.md","theme":"competition","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-13","text":"About 27% of FY2026 revenue depends on government tax-credit programs that legislators will review next year, creating policy uncertainty.","source":"risk_disclosures.md","theme":"regulation_legal","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-14","text":"A fire at the Ohio cell plant in August halted output for three weeks; insurance is expected to cover most of the loss and production has fully resumed.","source":"risk_disclosures.md","theme":"operations","polarity":0,"strength":1.0,"metrics":{},"cited":false},{"id":"HEL-15","text":"The stock fell as much as 26% from peak to trough over the past twelve months, a maximum drawdown that reflects high sensitivity to interest-rate expectations.","source":"risk_disclosures.md","theme":"market_risk","polarity":-1,"strength":1.0,"metrics":{"drawdown_pct":26.0},"cited":true},{"id":"HEL-16","text":"The chief executive sold 3% of her holdings under a pre-arranged trading plan in September.","source":"risk_disclosures.md","theme":"governance","polarity":0,"strength":1.5,"metrics":{},"cited":false}],"bull":[{"text":"Growth: Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25%.","cites":["HEL-01"]},{"text":"Profitability: Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year.","cites":["HEL-03"]},{"text":"Balance sheet: Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility.","cites":["HEL-04"]},{"text":"Valuation: The shares trade at 19 times forward earnings, a discount to the sector median of 24 times despite faster growth.","cites":["HEL-08"]},{"text":"Competition: A new patented cell architecture lifted module efficiency to 24.6%, about 1.5 points above the closest rival, and is already in volume production.","cites":["HEL-12"]}],"bear":[{"text":"Regulation & legal: About 27% of FY2026 revenue depends on government tax-credit programs that legislators will review next year, creating policy uncertainty.","cites":["HEL-13"]},{"text":"Valuation: Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%.","cites":["HEL-10"]},{"text":"Competition: Chinese module makers continue to cut prices; average selling prices fell 11% this year and management warned that further declines could compress margins.","cites":["HEL-11"]},{"text":"Market risk: The stock fell as much as 26% from peak to trough over the past twelve months, a maximum drawdown that reflects high sensitivity to interest-rate expectations.","cites":["HEL-15"]}],"rebuttals":[{"side":"bull","target_side":"bear","target_index":0,"response":"Conceded: the record contains no evidence that answers this point.","cites":[],"conceded":true},{"side":"bear","target_side":"bull","target_index":0,"response":"On the bull's growth point: Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%. [HEL-10]","cites":["HEL-10"],"conceded":false}],"judge":{"verdict":"BUY","confidence":0.74,"rationale":"The Bull case scores 7.30 against the Bear case's 4.45 on cited evidence (normalised margin +0.24; BUY needs \u2265 +0.15, AVOID needs \u2264 -0.15). Buy is justified by: Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25% [HEL-01]; Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year [HEL-03]; Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility [HEL-04]. The Bull conceded the Bear's strongest point. The Bear's rebuttal reduced the weight of the Bull's strongest point by 30%.","deciding":["HEL-01","HEL-03","HEL-04"],"strongest_bull":1,"strongest_bear":0},"score":{"bull":7.3,"bear":4.45,"margin":0.243,"claims":[{"side":"bull","index":0,"base":2.0,"effective":1.4},{"side":"bull","index":1,"base":2.0,"effective":2.0},{"side":"bull","index":2,"base":1.5,"effective":1.5},{"side":"bull","index":3,"base":1.2,"effective":1.2},{"side":"bull","index":4,"base":1.2,"effective":1.2},{"side":"bear","index":0,"base":1.35,"effective":1.35},{"side":"bear","index":1,"base":1.2,"effective":1.2},{"side":"bear","index":2,"base":1.2,"effective":1.2},{"side":"bear","index":3,"base":0.7,"effective":0.7}]},"risk":{"score":0,"veto":false,"reasons":[],"narrative":"Composite risk score is 0/100 against a veto threshold of 60. No stated limit or hard flag was crossed.","breaches":[]},"final":{"rec":"BUY","judge":"BUY","veto_applied":false},"audit":0},"verdant":{"asset":"Verdant Mobility Inc","facts":[{"id":"VER-01","text":"The shares trade at 3.1 times forward revenue, a discount to the 4.5 times average of high-growth infrastructure peers.","source":"analyst_coverage.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-02","text":"Seven of ten covering analysts rate the stock Buy, with a median price target 38% above the current share price.","source":"analyst_coverage.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":false},{"id":"VER-03","text":"One analyst downgraded the stock to Hold in October, citing concentration in a single customer.","source":"analyst_coverage.md","theme":"valuation","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-04","text":"Proprietary fast-charging technology cuts charging time by 40% and is protected by 23 granted patents.","source":"analyst_coverage.md","theme":"competition","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-05","text":"Two utility-backed competitors announced rival charging networks in Verdant's core markets, and management said pricing pressure is beginning to emerge.","source":"analyst_coverage.md","theme":"competition","polarity":-1,"strength":1.0,"metrics":{},"cited":true},{"id":"VER-06","text":"Revenue grew 94% year over year to $1.12 billion as charging sessions on the network tripled.","source":"company_filings.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"VER-07","text":"The order book reached a record $3.4 billion after the company signed a five-year deployment agreement with a major European logistics group.","source":"company_filings.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"VER-08","text":"Gross margin improved to 31% from 22% as hardware costs fell and software subscriptions grew to 28% of revenue.","source":"company_filings.md","theme":"profitability","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-09","text":"Management raised full-year revenue guidance for the second time this year.","source":"company_filings.md","theme":"growth","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-10","text":"Net debt to EBITDA of 3.2x at quarter end, up from 2.4x a year earlier, as the company borrowed to fund network expansion.","source":"company_filings.md","theme":"balance_sheet","polarity":-1,"strength":1.5,"metrics":{"leverage_x":3.2},"cited":true},{"id":"VER-11","text":"Cash and committed facilities of $310 million equal about 19 months of runway at the current burn rate.","source":"company_filings.md","theme":"balance_sheet","polarity":0,"strength":1.0,"metrics":{"runway_months":19.0},"cited":false},{"id":"VER-12","text":"The largest customer, the European logistics group, accounted for 56% of revenue, up from 41% a year earlier.","source":"company_filings.md","theme":"customers","polarity":-1,"strength":3.0,"metrics":{"customer_concentration_pct":56.0},"cited":true},{"id":"VER-13","text":"The founder and chief executive owns 24% of the shares and has not sold any since the listing.","source":"governance.md","theme":"governance","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"VER-14","text":"The board added two independent directors with infrastructure finance experience this year.","source":"governance.md","theme":"governance","polarity":0,"strength":1.0,"metrics":{},"cited":false}],"bull":[{"text":"Growth: Revenue grew 94% year over year to $1.12 billion as charging sessions on the network tripled.","cites":["VER-06"]},{"text":"Profitability: Gross margin improved to 31% from 22% as hardware costs fell and software subscriptions grew to 28% of revenue.","cites":["VER-08"]},{"text":"Valuation: The shares trade at 3.1 times forward revenue, a discount to the 4.5 times average of high-growth infrastructure peers.","cites":["VER-01"]},{"text":"Competition: Proprietary fast-charging technology cuts charging time by 40% and is protected by 23 granted patents.","cites":["VER-04"]},{"text":"Management & governance: The founder and chief executive owns 24% of the shares and has not sold any since the listing.","cites":["VER-13"]}],"bear":[{"text":"Customers: The largest customer, the European logistics group, accounted for 56% of revenue, up from 41% a year earlier.","cites":["VER-12"]},{"text":"Balance sheet: Net debt to EBITDA of 3.2x at quarter end, up from 2.4x a year earlier, as the company borrowed to fund network expansion.","cites":["VER-10"]},{"text":"Valuation: One analyst downgraded the stock to Hold in October, citing concentration in a single customer.","cites":["VER-03"]},{"text":"Competition: Two utility-backed competitors announced rival charging networks in Verdant's core markets, and management said pricing pressure is beginning to emerge.","cites":["VER-05"]}],"rebuttals":[{"side":"bull","target_side":"bear","target_index":0,"response":"On the bear's customers point: The order book reached a record $3.4 billion after the company signed a five-year deployment agreement with a major European logistics group. [VER-07] Management raised full-year revenue guidance for the second time this year. [VER-09]","cites":["VER-07","VER-09"],"conceded":false},{"side":"bear","target_side":"bull","target_index":0,"response":"On the bull's growth point: Net debt to EBITDA of 3.2x at quarter end, up from 2.4x a year earlier, as the company borrowed to fund network expansion. [VER-10]","cites":["VER-10"],"conceded":false}],"judge":{"verdict":"BUY","confidence":0.76,"rationale":"The Bull case scores 7.95 against the Bear case's 4.70 on cited evidence (normalised margin +0.26; BUY needs \u2265 +0.15, AVOID needs \u2264 -0.15). Buy is justified by: Revenue grew 94% year over year to $1.12 billion as charging sessions on the network tripled [VER-06]; Gross margin improved to 31% from 22% as hardware costs fell and software subscriptions grew to 28% of revenue [VER-08]; The shares trade at 3.1 times forward revenue, a discount to the 4.5 times average of high-growth infrastructure peers [VER-01]. The Bull's rebuttal reduced the weight of the Bear's strongest point by 50%. The Bear's rebuttal reduced the weight of the Bull's strongest point by 38%.","deciding":["VER-06","VER-08","VER-01"],"strongest_bull":1,"strongest_bear":1},"score":{"bull":7.95,"bear":4.7,"margin":0.257,"claims":[{"side":"bull","index":0,"base":2.0,"effective":1.25},{"side":"bull","index":1,"base":1.5,"effective":1.5},{"side":"bull","index":2,"base":1.2,"effective":1.2},{"side":"bull","index":3,"base":1.2,"effective":1.2},{"side":"bull","index":4,"base":1.05,"effective":1.05},{"side":"bear","index":0,"base":2.4,"effective":1.2},{"side":"bear","index":1,"base":1.5,"effective":1.5},{"side":"bear","index":2,"base":1.2,"effective":1.2},{"side":"bear","index":3,"base":0.8,"effective":0.8}]},"risk":{"score":30,"veto":true,"reasons":["Largest-customer revenue share: 56% vs max 50% [VER-12]"],"narrative":"Composite risk score is 30/100 against a veto threshold of 60. VETO: Largest-customer revenue share: 56% vs max 50% [VER-12].","breaches":[{"label":"Largest-customer revenue share","kind":"limit","observed":"56%","limit":"max 50%","cite":"VER-12"}]},"final":{"rec":"HOLD","judge":"BUY","veto_applied":true},"audit":0},"ironbridge":{"asset":"Ironbridge Retail Group","facts":[{"id":"IRO-01","text":"The shares trade at 6 times forward earnings, well below the retail sector median of 12 times.","source":"market_notes.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"IRO-02","text":"The dividend yield of 6.8% is the highest in the sector, but the payout ratio exceeds 100% of free cash flow.","source":"market_notes.md","theme":"valuation","polarity":-1,"strength":2.0,"metrics":{},"cited":true},{"id":"IRO-03","text":"A credit rating agency downgraded the company's bonds one notch to BB in October, citing weak cash generation.","source":"market_notes.md","theme":"balance_sheet","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"IRO-04","text":"Two large discount competitors opened 140 new stores in Ironbridge's core regions this year, taking market share.","source":"market_notes.md","theme":"competition","polarity":-1,"strength":2.0,"metrics":{},"cited":true},{"id":"IRO-05","text":"The new chief executive, appointed in March, has a track record of turning around two prior retailers.","source":"market_notes.md","theme":"governance","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"IRO-06","text":"Insiders purchased $4 million of shares in November following the results.","source":"market_notes.md","theme":"governance","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"IRO-07","text":"Same-store sales fell 7.4% in fiscal 2026, the third consecutive annual decline, as foot traffic continued to shrink.","source":"retail_filings.md","theme":"growth","polarity":-1,"strength":2.0,"metrics":{},"cited":true},{"id":"IRO-08","text":"The company will close 85 underperforming stores over the next 18 months, about 14% of its estate, and expects restructuring charges of $210 million.","source":"retail_filings.md","theme":"operations","polarity":-1,"strength":1.5,"metrics":{},"cited":false},{"id":"IRO-09","text":"Online sales grew 12% but represent only 9% of total revenue.","source":"retail_filings.md","theme":"growth","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"IRO-10","text":"Operating margin narrowed to 3.1% from 5.6% as markdowns increased to clear excess inventory.","source":"retail_filings.md","theme":"profitability","polarity":-1,"strength":1.5,"metrics":{},"cited":false},{"id":"IRO-11","text":"An inventory write-down of $85 million was recorded in the fourth quarter.","source":"retail_filings.md","theme":"operations","polarity":-1,"strength":1.5,"metrics":{},"cited":false},{"id":"IRO-12","text":"Net debt to EBITDA of 3.6x at year end, up from 2.8x a year earlier.","source":"retail_filings.md","theme":"balance_sheet","polarity":-1,"strength":1.5,"metrics":{"leverage_x":3.6},"cited":false},{"id":"IRO-13","text":"Free cash flow turned negative at $40 million, the second consecutive year of outflow, and the company drew $150 million on its revolving credit facility to fund the shortfall.","source":"retail_filings.md","theme":"profitability","polarity":-1,"strength":2.0,"metrics":{},"cited":true},{"id":"IRO-14","text":"The cost savings programme has delivered $120 million of annualised savings, ahead of the $100 million target.","source":"retail_filings.md","theme":"profitability","polarity":1,"strength":1.5,"metrics":{},"cited":true}],"bull":[{"text":"Growth: Online sales grew 12% but represent only 9% of total revenue.","cites":["IRO-09"]},{"text":"Profitability: The cost savings programme has delivered $120 million of annualised savings, ahead of the $100 million target.","cites":["IRO-14"]},{"text":"Valuation: The shares trade at 6 times forward earnings, well below the retail sector median of 12 times.","cites":["IRO-01"]},{"text":"Management & governance: The new chief executive, appointed in March, has a track record of turning around two prior retailers.","cites":["IRO-05"]},{"text":"Management & governance: Insiders purchased $4 million of shares in November following the results.","cites":["IRO-06"]}],"bear":[{"text":"Growth: Same-store sales fell 7.4% in fiscal 2026, the third consecutive annual decline, as foot traffic continued to shrink.","cites":["IRO-07"]},{"text":"Profitability: Free cash flow turned negative at $40 million, the second consecutive year of outflow, and the company drew $150 million on its revolving credit facility to fund the shortfall.","cites":["IRO-13"]},{"text":"Valuation: The dividend yield of 6.8% is the highest in the sector, but the payout ratio exceeds 100% of free cash flow.","cites":["IRO-02"]},{"text":"Competition: Two large discount competitors opened 140 new stores in Ironbridge's core regions this year, taking market share.","cites":["IRO-04"]},{"text":"Balance sheet: A credit rating agency downgraded the company's bonds one notch to BB in October, citing weak cash generation.","cites":["IRO-03"]}],"rebuttals":[{"side":"bull","target_side":"bear","target_index":0,"response":"On the bear's growth point: Online sales grew 12% but represent only 9% of total revenue. [IRO-09]","cites":["IRO-09"],"conceded":false},{"side":"bear","target_side":"bull","target_index":0,"response":"On the bull's growth point: Same-store sales fell 7.4% in fiscal 2026, the third consecutive annual decline, as foot traffic continued to shrink. [IRO-07]","cites":["IRO-07"],"conceded":false}],"judge":{"verdict":"AVOID","confidence":0.68,"rationale":"The Bull case scores 5.55 against the Bear case's 7.95 on cited evidence (normalised margin -0.18; BUY needs \u2265 +0.15, AVOID needs \u2264 -0.15). Avoid is justified by: Same-store sales fell 7.4% in fiscal 2026, the third consecutive annual decline, as foot traffic continued to shrink [IRO-07]; Free cash flow turned negative at $40 million, the second consecutive year of outflow, and the company drew $150 million on its revolving credit facility to fund the sho\u2026 [IRO-13]; The dividend yield of 6.8% is the highest in the sector, but the payout ratio exceeds 100% of free cash flow [IRO-02]. The Bull's rebuttal reduced the weight of the Bear's strongest point by 38%. The Bear's rebuttal reduced the weight of the Bull's strongest point by 50%.","deciding":["IRO-07","IRO-13","IRO-02"],"strongest_bull":1,"strongest_bear":1},"score":{"bull":5.55,"bear":7.95,"margin":-0.178,"claims":[{"side":"bull","index":0,"base":1.5,"effective":0.75},{"side":"bull","index":1,"base":1.5,"effective":1.5},{"side":"bull","index":2,"base":1.2,"effective":1.2},{"side":"bull","index":3,"base":1.05,"effective":1.05},{"side":"bull","index":4,"base":1.05,"effective":1.05},{"side":"bear","index":0,"base":2.0,"effective":1.25},{"side":"bear","index":1,"base":2.0,"effective":2.0},{"side":"bear","index":2,"base":1.6,"effective":1.6},{"side":"bear","index":3,"base":1.6,"effective":1.6},{"side":"bear","index":4,"base":1.5,"effective":1.5}]},"risk":{"score":30,"veto":false,"reasons":[],"narrative":"Composite risk score is 30/100 against a veto threshold of 60. No stated limit or hard flag was crossed. Close to a limit: Net debt / EBITDA 3.6x (max 4x) [IRO-12].","breaches":[{"label":"Net debt / EBITDA","kind":"near","observed":"3.6x","limit":"max 4x","cite":"IRO-12"}]},"final":{"rec":"AVOID","judge":"AVOID","veto_applied":false},"audit":0},"helios_tight":{"asset":"Helios Renewables Ltd","facts":[{"id":"HEL-01","text":"Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25%.","source":"annual_report.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"HEL-02","text":"Operating margin expanded to 17.8% from 14.2% as module costs fell and the second automated assembly line reached full output.","source":"annual_report.md","theme":"profitability","polarity":1,"strength":1.5,"metrics":{},"cited":false},{"id":"HEL-03","text":"Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year.","source":"annual_report.md","theme":"profitability","polarity":1,"strength":2.0,"metrics":{},"cited":true},{"id":"HEL-04","text":"Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility.","source":"annual_report.md","theme":"balance_sheet","polarity":1,"strength":1.5,"metrics":{"leverage_x":1.4},"cited":true},{"id":"HEL-05","text":"Cash and undrawn credit lines total $640 million, equivalent to 34 months of runway at the current investment pace.","source":"annual_report.md","theme":"balance_sheet","polarity":1,"strength":1.5,"metrics":{"runway_months":34.0},"cited":false},{"id":"HEL-06","text":"Contracted backlog reached a record $5.1 billion, roughly 1.8 times trailing revenue.","source":"annual_report.md","theme":"growth","polarity":1,"strength":2.0,"metrics":{},"cited":false},{"id":"HEL-07","text":"The largest customer accounted for 18% of revenue; no other customer exceeded 10%.","source":"annual_report.md","theme":"customers","polarity":1,"strength":1.0,"metrics":{"customer_concentration_pct":18.0},"cited":false},{"id":"HEL-08","text":"The shares trade at 19 times forward earnings, a discount to the sector median of 24 times despite faster growth.","source":"market_notes.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-09","text":"The consensus price target of $48 implies about 22% upside from the current share price of $39.40.","source":"market_notes.md","theme":"valuation","polarity":1,"strength":1.5,"metrics":{},"cited":false},{"id":"HEL-10","text":"Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%.","source":"market_notes.md","theme":"valuation","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-11","text":"Chinese module makers continue to cut prices; average selling prices fell 11% this year and management warned that further declines could compress margins.","source":"market_notes.md","theme":"competition","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-12","text":"A new patented cell architecture lifted module efficiency to 24.6%, about 1.5 points above the closest rival, and is already in volume production.","source":"market_notes.md","theme":"competition","polarity":1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-13","text":"About 27% of FY2026 revenue depends on government tax-credit programs that legislators will review next year, creating policy uncertainty.","source":"risk_disclosures.md","theme":"regulation_legal","polarity":-1,"strength":1.5,"metrics":{},"cited":true},{"id":"HEL-14","text":"A fire at the Ohio cell plant in August halted output for three weeks; insurance is expected to cover most of the loss and production has fully resumed.","source":"risk_disclosures.md","theme":"operations","polarity":0,"strength":1.0,"metrics":{},"cited":false},{"id":"HEL-15","text":"The stock fell as much as 26% from peak to trough over the past twelve months, a maximum drawdown that reflects high sensitivity to interest-rate expectations.","source":"risk_disclosures.md","theme":"market_risk","polarity":-1,"strength":1.0,"metrics":{"drawdown_pct":26.0},"cited":true},{"id":"HEL-16","text":"The chief executive sold 3% of her holdings under a pre-arranged trading plan in September.","source":"risk_disclosures.md","theme":"governance","polarity":0,"strength":1.5,"metrics":{},"cited":false}],"bull":[{"text":"Growth: Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25%.","cites":["HEL-01"]},{"text":"Profitability: Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year.","cites":["HEL-03"]},{"text":"Balance sheet: Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility.","cites":["HEL-04"]},{"text":"Valuation: The shares trade at 19 times forward earnings, a discount to the sector median of 24 times despite faster growth.","cites":["HEL-08"]},{"text":"Competition: A new patented cell architecture lifted module efficiency to 24.6%, about 1.5 points above the closest rival, and is already in volume production.","cites":["HEL-12"]}],"bear":[{"text":"Regulation & legal: About 27% of FY2026 revenue depends on government tax-credit programs that legislators will review next year, creating policy uncertainty.","cites":["HEL-13"]},{"text":"Valuation: Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%.","cites":["HEL-10"]},{"text":"Competition: Chinese module makers continue to cut prices; average selling prices fell 11% this year and management warned that further declines could compress margins.","cites":["HEL-11"]},{"text":"Market risk: The stock fell as much as 26% from peak to trough over the past twelve months, a maximum drawdown that reflects high sensitivity to interest-rate expectations.","cites":["HEL-15"]}],"rebuttals":[{"side":"bull","target_side":"bear","target_index":0,"response":"Conceded: the record contains no evidence that answers this point.","cites":[],"conceded":true},{"side":"bear","target_side":"bull","target_index":0,"response":"On the bull's growth point: Two brokers cut estimates in October citing weaker residential solar demand in Europe, trimming next-year growth forecasts to 22%. [HEL-10]","cites":["HEL-10"],"conceded":false}],"judge":{"verdict":"BUY","confidence":0.74,"rationale":"The Bull case scores 7.30 against the Bear case's 4.45 on cited evidence (normalised margin +0.24; BUY needs \u2265 +0.15, AVOID needs \u2264 -0.15). Buy is justified by: Revenue for fiscal 2026 rose 31% year over year to $2.84 billion, the fourth consecutive year of growth above 25% [HEL-01]; Free cash flow turned positive at $212 million, compared with an outflow of $64 million in the prior year [HEL-03]; Net debt to EBITDA of 1.4x at year end, down from 2.3x a year earlier, with no covenant pressure on any facility [HEL-04]. The Bull conceded the Bear's strongest point. The Bear's rebuttal reduced the weight of the Bull's strongest point by 30%.","deciding":["HEL-01","HEL-03","HEL-04"],"strongest_bull":1,"strongest_bear":0},"score":{"bull":7.3,"bear":4.45,"margin":0.243,"claims":[{"side":"bull","index":0,"base":2.0,"effective":1.4},{"side":"bull","index":1,"base":2.0,"effective":2.0},{"side":"bull","index":2,"base":1.5,"effective":1.5},{"side":"bull","index":3,"base":1.2,"effective":1.2},{"side":"bull","index":4,"base":1.2,"effective":1.2},{"side":"bear","index":0,"base":1.35,"effective":1.35},{"side":"bear","index":1,"base":1.2,"effective":1.2},{"side":"bear","index":2,"base":1.2,"effective":1.2},{"side":"bear","index":3,"base":0.7,"effective":0.7}]},"risk":{"score":30,"veto":true,"reasons":["Net debt / EBITDA: 1.4x vs max 1x [HEL-04]"],"narrative":"Composite risk score is 30/100 against a veto threshold of 60. VETO: Net debt / EBITDA: 1.4x vs max 1x [HEL-04].","breaches":[{"label":"Net debt / EBITDA","kind":"limit","observed":"1.4x","limit":"max 1x","cite":"HEL-04"}]},"final":{"rec":"HOLD","judge":"BUY","veto_applied":true},"audit":0}}</script>
+
+<script>
+(function(){
+"use strict";
+var D=JSON.parse(document.getElementById('site-data').textContent);
+var $=function(s,r){return (r||document).querySelector(s)};
+var $$=function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})};
+var KEYS=['helios','verdant','ironbridge','helios_tight'];
+var LABEL={helios:'Helios Renewables',verdant:'Verdant Mobility',ironbridge:'Ironbridge Retail',helios_tight:'Helios, leverage limit 1.0x'};
+var BLURB={
+ helios:'A healthy growth company. Both sides make real points, the bull evidence is stronger, and no risk limit is crossed.',
+ verdant:'Very fast growth, but one customer is 56% of revenue. The Judge says BUY, then the Risk agent steps in.',
+ ironbridge:'Falling sales and rising debt. The Bear\'s evidence outweighs the cheap valuation and the new chief executive.',
+ helios_tight:'Same company and same Judge verdict as Helios. Only the leverage limit changed, from 4.0x to 1.0x, and Helios carries 1.4x.'};
+var THEME={growth:'Growth',profitability:'Profitability',balance_sheet:'Balance sheet',regulation_legal:'Regulation and legal',valuation:'Valuation',competition:'Competition',customers:'Customers',governance:'Governance',market_risk:'Market risk',operations:'Operations'};
+var STAGE_NAME=['Facts','Opening arguments','Rebuttal','Judge and Risk','Decision'];
+var POL=function(p){return p>0?'bullish':p<0?'bearish':'neutral'};
+var LIM=[
+ {key:'leverage_x',label:'Net debt / EBITDA',unit:'x',kind:'max',val:4,min:.5,max:6,step:.1,dec:1},
+ {key:'customer_concentration_pct',label:'Largest-customer revenue share',unit:'%',kind:'max',val:50,min:10,max:80,step:1,dec:0},
+ {key:'runway_months',label:'Cash runway',unit:' months',kind:'min',val:12,min:3,max:36,step:1,dec:0},
+ {key:'drawdown_pct',label:'Max share-price drawdown',unit:'%',kind:'max',val:40,min:10,max:60,step:1,dec:0}];
+var cur='verdant',limits=[],allowAvoid=false,facts={};
+var stage=5,playing=false,playTimer=null,userTouched=false;
+var shown=0,lastApplied=false,lastFinal=null,lastVeto=null,scoreRaf=0;
+var reduced=!!(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+
+function restart(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)}
+function limitsFor(k){var L=LIM.map(function(l){return Object.assign({},l)});if(k==='helios_tight')L[0].val=1;return L}
+function fmt(v,l){return Number(v).toFixed(l.dec)+l.unit}
+
+/* the same rules as agents/risk.py */
+function riskEval(fs,L){
+  var br=[],flag={};
+  fs.forEach(function(f){L.forEach(function(l){
+    if(!(l.key in f.metrics))return;var v=f.metrics[l.key];
+    var crossed=l.kind==='max'?v>l.val:v<l.val;
+    var near=!crossed&&(l.kind==='max'?v>=l.val*(1-.15):v<=l.val*(1+.15));
+    if(crossed||near){br.push({key:l.key,label:l.label,kind:crossed?'limit':'near',v:v,l:l,cite:f.id});if(crossed)flag[f.id]=1}
+  })});
+  var nL=br.filter(function(b){return b.kind==='limit'}).length,nN=br.filter(function(b){return b.kind==='near'}).length;
+  var strong=fs.filter(function(f){return f.polarity<0&&f.strength>=2&&!flag[f.id]}).length;
+  var score=Math.min(100,nL*30+nN*10+Math.min(20,strong*5));
+  var reasons=br.filter(function(b){return b.kind==='limit'}).map(function(b){return b.label+': '+fmt(b.v,b.l)+' against a '+(b.l.kind==='max'?'maximum':'minimum')+' of '+fmt(b.l.val,b.l)+' ['+b.cite+']'});
+  if(score>=60)reasons.push('Composite risk score '+score+' reached the veto threshold of 60');
+  return {score:score,breaches:br,veto:reasons.length>0,reasons:reasons};
+}
+
+function chipBtn(id){return '<button class="cite" type="button" aria-expanded="false" data-id="'+id+'">'+id+'</button>'}
+function withChips(t){return esc(t).replace(/\[?\b([A-Z]{3}-\d{2})\b\]?/g,function(m,id){return chipBtn(id)})}
+
+/* ---------- the debate replay ---------- */
+function render(){
+  var s=D[cur];facts={};s.facts.forEach(function(f){facts[f.id]=f});
+  limits=limitsFor(cur);allowAvoid=false;shown=0;lastApplied=false;lastFinal=null;lastVeto=null;
+  var nDocs={};s.facts.forEach(function(f){nDocs[f.source]=1});
+  var cited=s.facts.filter(function(f){return f.cited}),unc=s.facts.filter(function(f){return !f.cited});
+  var maxW=Math.max.apply(null,s.score.claims.map(function(c){return c.base}))||1;
+  var sc={};s.score.claims.forEach(function(c){sc[c.side+c.index]=c});
+
+  var h='';
+  h+='<div class="stage" data-stage="1"><h3>Facts <small>RESEARCH AGENT</small></h3>'+
+    '<div class="card"><p>The Research Agent retrieved <b>'+s.facts.length+' facts</b> from '+Object.keys(nDocs).length+' documents and rated each one. The debaters cited <b>'+cited.length+'</b> of them. The other <b>'+unc.length+'</b> never reached the Judge, though the Risk agent still scanned them.</p>'+
+    '<details class="unc" style="padding:8px 12px"><summary>Show the '+unc.length+' facts nobody cited</summary><div class="cite-host"><div class="list">'+unc.map(function(f){return chipBtn(f.id)}).join('')+'</div><div class="factbox" style="margin-top:10px"></div></div></details></div></div>';
+
+  h+='<div class="stage" data-stage="2"><h3>Opening arguments <small>BULL AND BEAR, EVIDENCE WEIGHT BARS</small></h3><div class="two">';
+  ['bull','bear'].forEach(function(side){
+    var arr=s[side],best=s.judge['strongest_'+side];
+    h+='<div class="col '+side+'"><div class="colhead">'+(side==='bull'?'Bull Agent':'Bear Agent')+'<span>argues '+(side==='bull'?'BUY':'AVOID')+'</span></div>';
+    arr.forEach(function(c,i){
+      var q=sc[side+i]||{base:0,effective:0};
+      h+='<div class="card claim '+side+' cite-host"><div class="meta"><span class="eyebrow">Claim '+(i+1)+'</span>'+(i===best?'<span class="best">Strongest after rebuttal</span>':'')+'</div>'+
+        '<div class="t">'+esc(c.text)+'</div>'+
+        '<div class="wbar"><div class="tr"><b style="width:'+(q.base/maxW*100)+'%"></b><i style="width:'+(q.effective/maxW*100)+'%"></i></div><span>weight '+q.effective.toFixed(2)+(q.effective<q.base?' (was '+q.base.toFixed(2)+')':'')+'</span></div>'+
+        '<div>'+c.cites.map(chipBtn).join('')+'</div><div class="factbox"></div></div>';
+    });
+    h+='</div>';
+  });
+  h+='</div></div>';
+
+  h+='<div class="stage" data-stage="3"><h3>Rebuttal round <small>ONE REPLY EACH</small></h3><div class="two">';
+  s.rebuttals.forEach(function(r){
+    var t=sc[r.target_side+r.target_index];
+    h+='<div class="card reb '+r.side+' cite-host"><h4>'+(r.side==='bull'?'Bull':'Bear')+' answers the '+r.target_side+'\'s claim '+(r.target_index+1)+'</h4>'+
+      (r.conceded?'<span class="concede">Conceded</span>':'')+
+      '<div class="t">'+withChips(r.response)+'</div>'+
+      (t&&t.effective<t.base?'<div class="eff">Target claim weight '+t.base.toFixed(2)+' to '+t.effective.toFixed(2)+'</div>':'')+
+      '<div class="factbox"></div></div>';
+  });
+  h+='</div></div>';
+
+  var m=s.score.margin,pos=Math.max(0,Math.min(100,(m+1)/2*100));
+  h+='<div class="stage" data-stage="4"><h3>Judgement and risk review <small>RUN INDEPENDENTLY</small></h3><div class="two">'+
+   '<div class="card judge-card cite-host"><div class="jtop"><span class="eyebrow">Judge Agent</span><span class="chip '+s.judge.verdict+'">'+s.judge.verdict+'</span><span class="conf">confidence '+s.judge.confidence.toFixed(2)+'</span></div>'+
+   '<div><div class="track"><span class="dot" style="left:'+pos+'%"></span></div><div class="zones"><span>AVOID</span><span>HOLD</span><span>BUY</span></div></div>'+
+   '<div class="totals"><span>Bull evidence <b class="b">'+s.score.bull.toFixed(2)+'</b></span><span>Bear evidence <b class="r">'+s.score.bear.toFixed(2)+'</b></span><span>margin <b>'+(m>=0?'+':'')+m.toFixed(3)+'</b></span></div>'+
+   '<div class="rat">'+withChips(s.judge.rationale)+'</div>'+
+   '<div><span class="eyebrow">Deciding facts</span><div style="margin-top:6px">'+s.judge.deciding.map(chipBtn).join('')+'</div></div>'+
+   '<p class="note">The Judge was given only the '+cited.length+' cited facts.</p><div class="factbox"></div></div>'+
+   '<div class="card risk-card"><div class="jtop"><span class="eyebrow">Risk Agent</span><span id="vetopill"></span></div>'+
+   '<div class="scoreline"><span>Composite risk score <b id="rs">0</b> / 100</span><span class="note">veto at 60 or any breached limit</span></div><div class="meter" id="meter"><i id="mfill"></i><span class="tick"></span></div>'+
+   '<div class="lims">'+limits.map(function(l,i){
+      var vals=s.facts.filter(function(f){return l.key in f.metrics}).map(function(f){return f.metrics[l.key]});
+      var obs=vals.length?(l.kind==='max'?Math.max.apply(null,vals):Math.min.apply(null,vals)):null;
+      return '<div class="lim"><div class="l1"><strong>'+l.label+'</strong><span class="pill na" id="st-'+i+'" data-k="na">n/a</span></div>'+
+        '<div class="l2"><input type="range" id="lim-'+i+'" min="'+l.min+'" max="'+l.max+'" step="'+l.step+'" value="'+l.val+'" '+(obs===null?'disabled':'')+' aria-label="'+l.label+' limit"><output id="out-'+i+'" for="lim-'+i+'">'+(l.kind==='max'?'max ':'min ')+fmt(l.val,l)+'</output></div>'+
+        '<div class="obs">'+(obs===null?'not stated in these documents':'documents say '+fmt(obs,l))+'</div></div>';}).join('')+'</div>'+
+   '<div class="opt"><button class="btn" type="button" id="reset-lim">Reset limits</button></div></div></div></div>';
+
+  h+='<div class="stage" data-stage="5"><h3>Decision <small>RESOLVER</small></h3><div class="decision" id="decision"></div></div>';
+  $('#demo-body').innerHTML=h;
+
+  $$('#demo-body input[type=range]').forEach(function(inp,i){
+    inp.addEventListener('input',function(){limits[i].val=parseFloat(inp.value);updateRisk(false)});
+  });
+  $('#reset-lim').addEventListener('click',function(){
+    limits=limitsFor(cur);limits.forEach(function(l,i){$('#lim-'+i).value=l.val});updateRisk(false);
+  });
+  $('#stepper').innerHTML=STAGE_NAME.map(function(n,i){return '<button class="sp" type="button" data-n="'+(i+1)+'"><span class="d">'+(i+1)+'</span>'+n+'</button>'}).join('');
+  $$('#stepper .sp').forEach(function(b){b.addEventListener('click',function(){userTouched=true;pause();setStage(+b.getAttribute('data-n'),true,true)})});
+  updateRisk(false);
+  stage=5;applyStage(false);
+}
+
+function tweenScore(to){
+  var el=$('#rs');if(!el)return;cancelAnimationFrame(scoreRaf);
+  var from=shown;shown=to;
+  if(reduced||from===to){el.textContent=to;return}
+  var t0=performance.now(),dur=520;
+  (function f(t){var k=Math.min(1,(t-t0)/dur);k=1-Math.pow(1-k,3);el.textContent=Math.round(from+(to-from)*k);if(k<1)scoreRaf=requestAnimationFrame(f)})(t0);
+}
+function popEl(el){if(!reduced)restart(el,'pop')}
+
+function updateRisk(){
+  var s=D[cur],r=riskEval(s.facts,limits);
+  limits.forEach(function(l,i){
+    $('#out-'+i).textContent=(l.kind==='max'?'max ':'min ')+fmt(l.val,l);
+    var b=r.breaches.filter(function(x){return x.key===l.key}),el=$('#st-'+i);
+    var has=s.facts.some(function(f){return l.key in f.metrics});
+    var kind=!has?'na':b.some(function(x){return x.kind==='limit'})?'bad':b.length?'warn':'good';
+    var changed=el.getAttribute('data-k')!==kind;
+    el.className='pill '+kind;el.setAttribute('data-k',kind);el.textContent={na:'n/a',bad:'Breached',warn:'Near limit',good:'Within limit'}[kind];
+    if(changed&&kind!=='na')popEl(el);
+  });
+  tweenScore(r.score);
+  $('#mfill').style.transition=reduced?'none':'width .45s cubic-bezier(.2,.7,.2,1)';
+  $('#mfill').style.width=r.score+'%';
+  $('#meter').className='meter'+(r.score>=60?' over':'');
+  var vp=$('#vetopill');
+  if(lastVeto!==r.veto){vp.innerHTML=r.veto?'<span class="pill bad">Veto</span>':'<span class="pill good">No veto</span>';if(lastVeto!==null)popEl(vp.firstChild);lastVeto=r.veto}
+  var j=s.judge.verdict,applies=(j==='BUY')||(allowAvoid&&j==='AVOID'),applied=r.veto&&applies,final=applied?'HOLD':j,why;
+  if(applied)why='The Risk Agent vetoed: '+esc(r.reasons.join('; '))+'. The Judge\'s '+j+' is overridden and the committee holds.';
+  else if(r.veto)why='A veto condition is met ('+esc(r.reasons.join('; '))+'), but the veto only overrides a BUY unless you allow it to override AVOID, so the Judge\'s '+j+' stands.';
+  else why='No limit is crossed and the composite score is below 60, so the Judge\'s '+j+' stands.';
+  var slam=applied&&!lastApplied,flip=lastFinal!==final;
+  $('#decision').innerHTML=(applied?'<span class="stamp'+(slam?' slam':'')+'">Vetoed</span>':'')+
+   '<div class="flow"><div class="step"><span class="k">Judge</span><span class="chip '+j+'">'+j+'</span></div><span class="arrow">then</span>'+
+   '<div class="step"><span class="k">Risk Agent</span>'+(r.veto?'<span class="pill bad">Veto</span>':'<span class="pill good">No veto</span>')+'</div><span class="arrow">gives</span>'+
+   '<div class="step fin"><span class="k">Final recommendation</span><span class="chip '+final+(flip&&lastFinal!==null?' flip':'')+'">'+final+'</span></div></div>'+
+   '<p class="why">'+why+'</p>'+
+   '<label class="opt" for="allow"><input type="checkbox" id="allow" '+(allowAvoid?'checked':'')+'> Let the veto also override an AVOID (a configuration option in the code)</label>';
+  lastApplied=applied;lastFinal=final;
+  $('#allow').addEventListener('change',function(e){allowAvoid=e.target.checked;updateRisk(false)});
+}
+
+/* ---------- stage controller ---------- */
+function applyStage(anim){
+  $$('#demo-body [data-stage]').forEach(function(el){
+    var n=+el.getAttribute('data-stage');el.hidden=n>stage;
+  });
+  $$('#stepper .sp').forEach(function(b){
+    var n=+b.getAttribute('data-n');
+    b.classList.toggle('done',n<stage);
+    if(n===stage)b.setAttribute('aria-current','step');else b.removeAttribute('aria-current');
+  });
+  var nx=$('#next');nx.textContent=stage>=5?'Start over':'Next step';
+  var pl=$('#play');pl.textContent=playing?'Pause':(stage>=5&&userTouched?'Play again':'Play the debate');
+}
+function setStage(n,anim,scroll){
+  stage=Math.max(1,Math.min(5,n));
+  if(anim){shown=0;lastApplied=false;lastFinal=null;}
+  applyStage(anim);
+  var el=$('#demo-body [data-stage="'+stage+'"]');
+  if(anim&&el&&!reduced){
+    $$('.card,.decision',el).forEach(function(c,i){c.style.setProperty('--i',i)});
+    el.classList.remove('enter');void el.offsetWidth;el.classList.add('enter');
+  }
+  if(anim)updateRisk(true);
+  if(scroll&&el){var r=el.getBoundingClientRect();if(r.bottom>window.innerHeight||r.top<70)el.scrollIntoView({block:'nearest',behavior:reduced?'auto':'smooth'})}
+}
+function pause(){playing=false;clearTimeout(playTimer);applyStage(false)}
+function tick(){
+  if(!playing)return;
+  if(stage>=5){playing=false;applyStage(false);return}
+  setStage(stage+1,true,userTouched);
+  playTimer=setTimeout(tick,stage===4?2600:1900);
+  if(stage>=5){playing=false;clearTimeout(playTimer);applyStage(false)}
+}
+function play(){
+  if(playing){pause();return}
+  playing=true;
+  if(stage>=5)setStage(1,true,userTouched);else applyStage(false);
+  clearTimeout(playTimer);playTimer=setTimeout(tick,1900);
+  applyStage(false);
+}
+$('#play').addEventListener('click',function(){userTouched=true;play()});
+$('#next').addEventListener('click',function(){userTouched=true;pause();setStage(stage>=5?1:stage+1,true,true)});
+$('#all').addEventListener('click',function(){userTouched=true;pause();setStage(5,false,false);applyStage(false)});
+
+/* fact chips: tap to open the fact in place */
+document.addEventListener('click',function(e){
+  var c=e.target.closest&&e.target.closest('.cite');if(!c)return;
+  var host=c.closest('.cite-host');if(!host)return;
+  var box=host.querySelector('.factbox');if(!box)return;
+  var id=c.getAttribute('data-id'),ex=box.querySelector('.fact[data-id="'+id+'"]');
+  if(ex){ex.remove();c.setAttribute('aria-expanded','false');return}
+  var f=facts[id];if(!f)return;
+  var d=document.createElement('div');d.className='fact p'+f.polarity;d.setAttribute('data-id',id);
+  d.innerHTML='<div class="h"><b>'+id+'</b><span>'+(THEME[f.theme]||f.theme)+'</span><span>'+POL(f.polarity)+', strength '+f.strength+'</span><span>'+esc(f.source)+'</span></div><div>'+esc(f.text)+'</div>';
+  box.appendChild(d);c.setAttribute('aria-expanded','true');
+  if(!reduced)d.animate([{opacity:0,transform:'translateY(-6px)'},{opacity:1,transform:'none'}],{duration:220,easing:'ease-out'});
+});
+
+function buildTabs(){
+  $('#tabs').innerHTML=KEYS.map(function(k){return '<button class="tab" role="tab" type="button" data-k="'+k+'" aria-selected="'+(k===cur)+'">'+LABEL[k]+'</button>'}).join('');
+  $$('#tabs .tab').forEach(function(b){b.addEventListener('click',function(){
+    userTouched=true;pause();cur=b.getAttribute('data-k');
+    $$('#tabs .tab').forEach(function(x){x.setAttribute('aria-selected',x===b)});
+    $('#blurb').textContent=BLURB[cur];render();
+    if(!reduced)$$('#demo-body .card').forEach(function(c,i){c.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:350,delay:Math.min(i,10)*25,easing:'ease-out',fill:'backwards'})});
+  })});
+  $('#blurb').textContent=BLURB[cur];
+}
+
+/* ---------- interactive pipeline ---------- */
+var PIPE=[
+ {name:'Research',file:'agents/research.py',d:'Retrieves facts from the documents and rates each one.',
+  inp:'The asset\'s document set, indexed with TF-IDF. Each paragraph is one fact with a stable ID such as VER-12.',
+  out:'A fact sheet: every fact with a theme, a direction (bullish, bearish, neutral), a strength and any metrics.',
+  rule:'Fact ratings use fixed thresholds, so changing a risk limit can never change how the Judge sees a fact.'},
+ {name:'Opening arguments',file:'bull.py · bear.py',d:'Bull argues BUY, Bear argues AVOID. Up to five cited claims each.',
+  inp:'The fact sheet, plus a search_facts tool in live mode.',
+  out:'Up to five claims per side, each citing fact IDs.',
+  rule:'A claim with no citation, an unknown fact ID or a number that is not in the cited fact is dropped and logged. Citing a bearish fact earns the Bull nothing.'},
+ {name:'Rebuttal round',file:'agents/rebuttal.py',d:'Each side answers the other\'s strongest point once, or concedes.',
+  inp:'The opponent\'s strongest claim and the fact sheet.',
+  out:'One reply per side, with citations, or a concession.',
+  rule:'Replies pass the same citation checks. A rebuttal discounts the target claim by up to 50%, and a new fact gets half credit.'},
+ {name:'Judge and Risk',file:'judge.py · risk.py',d:'The Judge sees only cited facts. Risk scans every fact.',par:true,
+  inp:'Judge: only the facts the debate cited, no search tool. Risk: the whole fact sheet and the limits in config.py.',
+  out:'Judge: a verdict, confidence, rationale and deciding facts. Risk: a score, any breaches, and a veto or none.',
+  rule:'Any fact ID the Judge uses that was not cited is stripped. The verdict follows the scorecard margin (+0.15 for BUY, -0.15 for AVOID). The veto is rule-based, so a model cannot remove it.'},
+ {name:'Resolve',file:'orchestrator.py',d:'The Judge\'s verdict stands unless the Risk veto forces HOLD.',
+  inp:'The Judge\'s verdict and the Risk assessment.',
+  out:'The final recommendation, the strongest argument on each side, the deciding rationale and any veto reasons.',
+  rule:'A veto overrides a BUY with HOLD (it overrides AVOID only if configured). Every step is saved to a Markdown report and a JSON record with the audit log.'}];
+var pipeSel=0,pipeTimer=null,pipePlaying=false;
+function buildPipe(){
+  $('#pipe-cards').innerHTML=PIPE.map(function(p,i){
+    return '<button class="stg'+(p.par?' par':'')+'" type="button" aria-pressed="'+(i===0)+'" data-i="'+i+'"><span class="n">Step '+(i+1)+(p.par?', in parallel':'')+'</span><h3>'+p.name+'</h3><span class="d">'+p.d+'</span><code>'+p.file+'</code></button>';}).join('');
+  $$('#pipe-cards .stg').forEach(function(b){b.addEventListener('click',function(){stopPipe();selPipe(+b.getAttribute('data-i'))})});
+  selPipe(0,true);
+}
+function selPipe(i,quiet){
+  pipeSel=i;var p=PIPE[i];
+  $$('#pipe-cards .stg').forEach(function(b,k){b.setAttribute('aria-pressed',k===i)});
+  $('#pipe-fill').style.width=((i+1)/PIPE.length*100)+'%';
+  var d=$('#pipe-detail');
+  d.innerHTML='<div class="pipe-title"><h3 style="margin:0">Step '+(i+1)+': '+p.name+'</h3><code>'+p.file+'</code></div>'+
+    '<div><h4>Goes in</h4><p>'+esc(p.inp)+'</p></div><div><h4>Comes out</h4><p>'+esc(p.out)+'</p></div><div><h4>Enforced in code</h4><p>'+esc(p.rule)+'</p></div>';
+  if(!quiet&&!reduced)restart(d,'pop');
+}
+function stopPipe(){pipePlaying=false;clearTimeout(pipeTimer);$('#pipe-play').textContent='Play the flow'}
+$('#pipe-play').addEventListener('click',function(){
+  if(pipePlaying){stopPipe();return}
+  pipePlaying=true;this.textContent='Stop';selPipe(0);
+  (function step(){pipeTimer=setTimeout(function(){
+    if(!pipePlaying)return;
+    if(pipeSel>=PIPE.length-1){stopPipe();return}
+    selPipe(pipeSel+1);step();
+  },1700)})();
+});
+
+/* ---------- results chart with a movable threshold ---------- */
+var RES=[{k:'helios',o:.243,l:.36},{k:'verdant',o:.257,l:.37},{k:'ironbridge',o:-.178,l:-.64},{k:'helios_tight',o:.243,l:.32}];
+var LO=-.7,SPAN=1.2,X=function(v){return (v-LO)/SPAN*100};
+function zone(m,t){return m>=t?'BUY':m<=-t?'AVOID':'HOLD'}
+function sgn(v,dec){return (v>=0?'+':'')+v.toFixed(dec)}
+function valsHtml(r,t){
+  return 'offline '+sgn(r.o,3)+' <span class="chip sm '+zone(r.o,t)+'">'+zone(r.o,t)+'</span> &nbsp;·&nbsp; live '+sgn(r.l,2)+' <span class="chip sm '+zone(r.l,t)+'">'+zone(r.l,t)+'</span>';
+}
+function buildChart(){
+  var z=X(0);
+  var out=RES.map(function(r){
+    function bar(v,col,top){var a=Math.min(z,X(v)),w=Math.abs(X(v)-z);return '<span class="bar" style="top:'+top+'px;left:'+a+'%;width:'+w+'%;background:'+col+';transform-origin:'+(v>=0?'left':'right')+'"></span>'}
+    return '<div class="crow"><div class="hd"><strong>'+LABEL[r.k]+'</strong><span class="vals" data-k="'+r.k+'">'+valsHtml(r,.15)+'</span></div>'+
+      '<div class="ctrack" role="img" aria-label="'+LABEL[r.k]+': offline margin '+sgn(r.o,3)+', live margin '+sgn(r.l,2)+'"><span class="z" style="left:'+z+'%"></span>'+bar(r.o,'var(--s1)',6)+bar(r.l,'var(--s2)',23)+'</div></div>';
+  }).join('');
+  var ticks=[-.6,-.3,0,.3].map(function(v){return '<span style="left:'+X(v)+'%">'+(v>0?'+':'')+v.toFixed(1)+'</span>'}).join('');
+  $('#chart').innerHTML='<div class="zonelab"><span>AVOID zone</span><span>HOLD zone</span><span>BUY zone</span></div>'+out+'<div class="axis">'+ticks+'</div>';
+}
+function setThr(t){
+  $('#thr-out').textContent='±'+t.toFixed(2);
+  var ch=$('#chart');ch.style.setProperty('--za',X(-t)+'%');ch.style.setProperty('--zb',X(t)+'%');
+  var flips=[];
+  RES.forEach(function(r){
+    $('.vals[data-k="'+r.k+'"]').innerHTML=valsHtml(r,t);
+    [['offline',r.o],['live',r.l]].forEach(function(p){var a=zone(p[1],.15),b=zone(p[1],t);if(a!==b)flips.push(LABEL[r.k]+' ('+p[0]+') '+a+' to '+b)});
+  });
+  var note=$('#thr-note');
+  if(Math.abs(t-.15)<.0051)note.textContent='This is the default threshold used in the code. Drag the slider to see which scorecard results would change.';
+  else if(!flips.length)note.textContent='At ±'+t.toFixed(2)+' every scorecard result keeps the zone it has at the default ±0.15.';
+  else note.textContent='At ±'+t.toFixed(2)+', '+flips.length+' of 8 scorecard results change: '+flips.join('; ')+'. (This shows the scorecard only. The Risk veto is separate.)';
+}
+$('#thr').addEventListener('input',function(){setThr(parseFloat(this.value))});
+$('#thr-reset').addEventListener('click',function(){$('#thr').value=.15;setThr(.15)});
+
+/* ---------- tests ---------- */
+var TESTS=[
+ ['Demo outcomes',3,'Helios ends BUY, Verdant ends HOLD because of the veto, Ironbridge ends AVOID.'],
+ ['Citations',6,'Every claim cites real facts, the number guard works, uncited or invented claims are dropped, and the Bull cannot score with a bearish fact.'],
+ ['Judge restriction',6,'The Judge is shown only cited facts, has no search tool, loses any stray fact ID it uses, and holds when neither side clears the margin.'],
+ ['Risk veto',7,'Tightened limits force a veto, a model cannot talk a veto away, Risk sees facts nobody cited, AVOID is not overridden by default, the composite score and hard flags work, and minimum-type limits work.'],
+ ['Semantic Kernel path',4,'The live Semantic Kernel path matches the offline results on all three assets and still enforces every guardrail on a misbehaving model.']];
+function buildTests(){
+  $('#tests').innerHTML=TESTS.map(function(t,i){return '<div class="titem"><button class="trow" type="button" aria-expanded="false" data-i="'+i+'"><span>'+t[0]+'</span><div class="tr"><i style="width:'+(t[1]/7*100)+'%"></i></div><b>'+t[1]+'</b></button></div>'}).join('');
+  $$('#tests .trow').forEach(function(b){b.addEventListener('click',function(){
+    var it=b.parentNode,ex=$('.tdetail',it);
+    if(ex){ex.remove();b.setAttribute('aria-expanded','false');return}
+    var d=document.createElement('div');d.className='tdetail';d.textContent=TESTS[+b.getAttribute('data-i')][2];it.appendChild(d);b.setAttribute('aria-expanded','true');
+  })});
+}
+
+/* ---------- citation checker ---------- */
+function buildChecker(){
+  var V={};D.verdant.facts.forEach(function(f){V[f.id]=f});
+  var EX=[['Valid claim','Revenue grew 94% year over year to $1.12 billion.','VER-06'],['No citation','Revenue will triple next year.',''],['Invented source','Margins are excellent.','VER-99'],['Invented number','Revenue grew 500% last year.','VER-06']];
+  $('#examples').innerHTML=EX.map(function(e,i){return '<button class="btn" type="button" data-i="'+i+'">'+e[0]+'</button>'}).join('');
+  var NUM=/\d+(?:\.\d+)?/g,IDRE=/\[?\b[A-Z]{2,4}-\d{2,3}\b\]?/g;
+  function run(){
+    var claim=$('#claim').value,ids=$('#cites').value.split(/[\s,;]+/).map(function(x){return x.replace(/[\[\]]/g,'').trim()}).filter(Boolean);
+    var kept=[],bad=[];ids.forEach(function(i){if(V[i]){if(kept.indexOf(i)<0)kept.push(i)}else bad.push(i)});
+    var pool={};kept.forEach(function(i){(V[i].text.match(NUM)||[]).forEach(function(n){pool[n]=1})});
+    /* live preview: each number in the claim, green if the cited facts contain it, red if not */
+    var pv=$('#preview');
+    if(!claim.trim())pv.innerHTML='';
+    else{
+      var html=esc(claim).replace(/(\[?\b[A-Z]{2,4}-\d{2,3}\b\]?)|(\d+(?:\.\d+)?)/g,function(m,id,n){
+        if(id)return id;if(!kept.length)return '<mark>'+n+'</mark>';
+        return '<mark class="'+(pool[n]?'g':'b')+'">'+n+'</mark>'});
+      pv.innerHTML='<span class="note">Numbers checked against the cited facts: </span>'+html;
+    }
+    var lines=[],ok=false;
+    if(bad.length)lines.push(['invalid_citation','Unknown fact IDs '+bad.join(', ')+' were stripped.']);
+    if(!claim.trim()){lines.push(['empty_claim','The claim has no text.'])}
+    else if(!kept.length){lines.push(['uncited_claim','Dropped: the claim has no valid citation.'])}
+    else{
+      var nums=(claim.replace(IDRE,' ').match(NUM)||[]).filter(function(n){return !pool[n]});
+      if(nums.length)lines.push(['ungrounded_number','Dropped: the number '+nums.join(', ')+' does not appear in the cited facts.']);
+      else{ok=true;lines.push(['accepted','Accepted, citing '+kept.join(', ')+'.'])}
+    }
+    var out=$('#check-out'),sig=(ok?'1':'0')+lines.map(function(l){return l[0]}).join(',');
+    out.innerHTML='<div class="verdictbox '+(ok?'ok':'no')+'"><b>'+(ok?'Claim accepted':'Claim dropped')+'</b></div>'+
+      lines.map(function(l){return '<div class="line"><code>'+l[0]+'</code><span>'+esc(l[1])+'</span></div>'}).join('')+
+      kept.map(function(i){return '<div class="fact p'+V[i].polarity+'"><div class="h"><b>'+i+'</b><span>'+esc(V[i].source)+'</span></div><div>'+esc(V[i].text)+'</div></div>'}).join('');
+    if(!reduced&&out.getAttribute('data-sig')!==sig){var vb=$('.verdictbox',out);if(vb)vb.animate([{transform:'scale(.9)',opacity:.3},{transform:'scale(1.04)',opacity:1},{transform:'scale(1)'}],{duration:320,easing:'ease-out'})}
+    out.setAttribute('data-sig',sig);
+  }
+  $$('#examples .btn').forEach(function(b){b.addEventListener('click',function(){var e=EX[+b.getAttribute('data-i')];$('#claim').value=e[1];$('#cites').value=e[2];run()})});
+  $('#claim').addEventListener('input',run);$('#cites').addEventListener('input',run);
+  $('#claim').value=EX[3][1];$('#cites').value=EX[3][2];run();
+}
+
+/* copy buttons */
+$$('.code .copy').forEach(function(b){b.addEventListener('click',function(){
+  var pre=b.parentNode.querySelector('pre'),txt=pre.textContent;
+  function done(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy'},1400)}
+  function sel(){var r=document.createRange();r.selectNodeContents(pre);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='Selected'}
+  try{navigator.clipboard.writeText(txt).then(done,sel)}catch(err){sel()}
+})});
+
+/* hero strip replay */
+$('#strip-replay').addEventListener('click',function(){restart($('#strip'),'play')});
+
+/* ---------- page motion: progress bar, nav highlight, reveal on scroll ---------- */
+var ticking=false;
+function onScroll(){
+  if(ticking)return;ticking=true;
+  requestAnimationFrame(function(){
+    ticking=false;
+    var de=document.documentElement,max=Math.max(de.scrollHeight,document.body.scrollHeight)-window.innerHeight,y=window.pageYOffset||0;
+    $('#progress').style.width=(max>0?Math.min(100,y/max*100):0)+'%';
+    var cur2=null;['how','demo','results','rules','run'].forEach(function(id){var e=document.getElementById(id);if(e&&e.getBoundingClientRect().top<=140)cur2=id});
+    $$('.top nav a').forEach(function(a){if(a.getAttribute('href')==='#'+cur2)a.setAttribute('aria-current','true');else a.removeAttribute('aria-current')});
+  });
+}
+window.addEventListener('scroll',onScroll,{passive:true});window.addEventListener('resize',onScroll);
+
+function once(sel,cb,th){
+  if(!('IntersectionObserver' in window)||reduced)return;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){io.unobserve(e.target);cb(e.target)}})},{threshold:th||.15});
+  $$(sel).forEach(function(el){io.observe(el)});
+}
+once('.s-head,.rule,.roster,.chartbox,.try,.code,.pipe-head',function(el){
+  el.animate([{opacity:0,transform:'translateY(18px)'},{opacity:1,transform:'none'}],{duration:550,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});
+},.12);
+once('.chartbox',function(el){
+  $$('.bar',el).forEach(function(b,i){b.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:750,delay:i*90,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'})});
+},.3);
+once('#tests',function(el){
+  $$('.tr i',el).forEach(function(b,i){b.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:650,delay:i*90,easing:'cubic-bezier(.2,.7,.2,1)',fill:'backwards'});b.style.transformOrigin='left'});
+},.3);
+once('#tabs',function(){if(!userTouched&&!playing){play()}},.9);
+
+buildTabs();render();buildPipe();buildChart();setThr(.15);buildTests();buildChecker();onScroll();
+})();
+</script>
+
+</body>
+</html>

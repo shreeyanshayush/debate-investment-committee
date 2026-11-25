@@ -1,0 +1,707 @@
+{
+  "asset": "Verdant Mobility Inc",
+  "backend": "Semantic Kernel ChatCompletionAgent (gemini:gemini-3.5-flash-lite)",
+  "sheet": {
+    "asset": "Verdant Mobility Inc",
+    "facts": {
+      "VER-01": {
+        "id": "VER-01",
+        "text": "The shares trade at 3.1 times forward revenue, a discount to the 4.5 times average of high-growth infrastructure peers.",
+        "source": "analyst_coverage.md",
+        "section": "Valuation"
+      },
+      "VER-02": {
+        "id": "VER-02",
+        "text": "Seven of ten covering analysts rate the stock Buy, with a median price target 38% above the current share price.",
+        "source": "analyst_coverage.md",
+        "section": "Valuation"
+      },
+      "VER-03": {
+        "id": "VER-03",
+        "text": "One analyst downgraded the stock to Hold in October, citing concentration in a single customer.",
+        "source": "analyst_coverage.md",
+        "section": "Valuation"
+      },
+      "VER-04": {
+        "id": "VER-04",
+        "text": "Proprietary fast-charging technology cuts charging time by 40% and is protected by 23 granted patents.",
+        "source": "analyst_coverage.md",
+        "section": "Technology and competition"
+      },
+      "VER-05": {
+        "id": "VER-05",
+        "text": "Two utility-backed competitors announced rival charging networks in Verdant's core markets, and management said pricing pressure is beginning to emerge.",
+        "source": "analyst_coverage.md",
+        "section": "Technology and competition"
+      },
+      "VER-06": {
+        "id": "VER-06",
+        "text": "Revenue grew 94% year over year to $1.12 billion as charging sessions on the network tripled.",
+        "source": "company_filings.md",
+        "section": "Growth"
+      },
+      "VER-07": {
+        "id": "VER-07",
+        "text": "The order book reached a record $3.4 billion after the company signed a five-year deployment agreement with a major European logistics group.",
+        "source": "company_filings.md",
+        "section": "Growth"
+      },
+      "VER-08": {
+        "id": "VER-08",
+        "text": "Gross margin improved to 31% from 22% as hardware costs fell and software subscriptions grew to 28% of revenue.",
+        "source": "company_filings.md",
+        "section": "Growth"
+      },
+      "VER-09": {
+        "id": "VER-09",
+        "text": "Management raised full-year revenue guidance for the second time this year.",
+        "source": "company_filings.md",
+        "section": "Growth"
+      },
+      "VER-10": {
+        "id": "VER-10",
+        "text": "Net debt to EBITDA of 3.2x at quarter end, up from 2.4x a year earlier, as the company borrowed to fund network expansion.",
+        "source": "company_filings.md",
+        "section": "Balance sheet and liquidity"
+      },
+      "VER-11": {
+        "id": "VER-11",
+        "text": "Cash and committed facilities of $310 million equal about 19 months of runway at the current burn rate.",
+        "source": "company_filings.md",
+        "section": "Balance sheet and liquidity"
+      },
+      "VER-12": {
+        "id": "VER-12",
+        "text": "The largest customer, the European logistics group, accounted for 56% of revenue, up from 41% a year earlier.",
+        "source": "company_filings.md",
+        "section": "Customers"
+      },
+      "VER-13": {
+        "id": "VER-13",
+        "text": "The founder and chief executive owns 24% of the shares and has not sold any since the listing.",
+        "source": "governance.md",
+        "section": "Management"
+      },
+      "VER-14": {
+        "id": "VER-14",
+        "text": "The board added two independent directors with infrastructure finance experience this year.",
+        "source": "governance.md",
+        "section": "Management"
+      }
+    },
+    "analysis": {
+      "VER-01": {
+        "theme": "valuation",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-02": {
+        "theme": "valuation",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-03": {
+        "theme": "customers",
+        "polarity": -1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-04": {
+        "theme": "competition",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-05": {
+        "theme": "competition",
+        "polarity": -1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-06": {
+        "theme": "growth",
+        "polarity": 1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "VER-07": {
+        "theme": "growth",
+        "polarity": 1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "VER-08": {
+        "theme": "profitability",
+        "polarity": 1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "VER-09": {
+        "theme": "growth",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-10": {
+        "theme": "balance_sheet",
+        "polarity": -1,
+        "strength": 2.0,
+        "metrics": {
+          "leverage_x": 3.2
+        }
+      },
+      "VER-11": {
+        "theme": "balance_sheet",
+        "polarity": 0,
+        "strength": 1.5,
+        "metrics": {
+          "runway_months": 19.0
+        }
+      },
+      "VER-12": {
+        "theme": "customers",
+        "polarity": -1,
+        "strength": 3.0,
+        "metrics": {
+          "customer_concentration_pct": 56.0
+        }
+      },
+      "VER-13": {
+        "theme": "governance",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "VER-14": {
+        "theme": "governance",
+        "polarity": 1,
+        "strength": 1.5,
+        "metrics": {}
+      }
+    },
+    "retrieved_by": {
+      "VER-09": [
+        "growth",
+        "customers"
+      ],
+      "VER-06": [
+        "growth",
+        "customers"
+      ],
+      "VER-01": [
+        "growth",
+        "valuation",
+        "customers",
+        "management"
+      ],
+      "VER-08": [
+        "growth",
+        "profitability",
+        "market risk"
+      ],
+      "VER-12": [
+        "growth",
+        "customers"
+      ],
+      "VER-07": [
+        "growth"
+      ],
+      "VER-11": [
+        "profitability",
+        "balance sheet"
+      ],
+      "VER-02": [
+        "valuation",
+        "competition",
+        "customers",
+        "market risk"
+      ],
+      "VER-03": [
+        "valuation",
+        "customers",
+        "market risk"
+      ],
+      "VER-10": [
+        "balance sheet"
+      ],
+      "VER-05": [
+        "competition"
+      ],
+      "VER-04": [
+        "competition"
+      ],
+      "VER-13": [
+        "management"
+      ],
+      "VER-14": [
+        "management"
+      ]
+    }
+  },
+  "arguments": {
+    "bull": {
+      "side": "bull",
+      "claims": [
+        {
+          "text": "Revenue surged 94% year over year to $1.12 billion alongside a record order book of $3.4 billion, supported by a five-year deployment agreement with a major European logistics group.",
+          "cites": [
+            "VER-06",
+            "VER-07"
+          ]
+        },
+        {
+          "text": "Shares trade at an attractive 3.1 times forward revenue discount compared to the 4.5 times average of high-growth infrastructure peers, with seven of ten analysts rating the stock Buy and a median price target 38% higher than the current price.",
+          "cites": [
+            "VER-01",
+            "VER-02"
+          ]
+        },
+        {
+          "text": "Gross margin expanded strongly to 31% from 22% due to falling hardware costs and software subscriptions growing to account for 28% of revenue, leading management to raise full-year revenue guidance twice.",
+          "cites": [
+            "VER-08",
+            "VER-09"
+          ]
+        },
+        {
+          "text": "The company possesses proprietary fast-charging technology protected by 23 granted patents that cuts charging time by 40%.",
+          "cites": [
+            "VER-04"
+          ]
+        },
+        {
+          "text": "The founder and CEO retains a 24% ownership stake with zero shares sold since listing, while governance is strengthened by the addition of two independent infrastructure finance directors.",
+          "cites": [
+            "VER-13",
+            "VER-14"
+          ]
+        }
+      ]
+    },
+    "bear": {
+      "side": "bear",
+      "claims": [
+        {
+          "text": "The company faces severe customer concentration risk as its largest customer, a European logistics group, accounts for 56% of revenue, up from 41% a year earlier.",
+          "cites": [
+            "VER-12"
+          ]
+        },
+        {
+          "text": "Net debt to EBITDA rose to 3.2x at quarter end from 2.4x a year earlier due to borrowings for network expansion.",
+          "cites": [
+            "VER-10"
+          ]
+        },
+        {
+          "text": "Pricing pressure is beginning to emerge in core markets following the announcement of rival charging networks by two utility-backed competitors.",
+          "cites": [
+            "VER-05"
+          ]
+        },
+        {
+          "text": "An analyst downgraded the stock to Hold in October specifically because of this concentration in a single customer.",
+          "cites": [
+            "VER-03"
+          ]
+        }
+      ]
+    }
+  },
+  "rebuttals": [
+    {
+      "side": "bull",
+      "target_side": "bear",
+      "target_index": 0,
+      "response": "While customer concentration has increased, this relationship is anchored by a record $3.4 billion order book backed by a five-year deployment agreement [VER-07], which underpins phenomenal 94% year-over-year revenue growth to $1.12 billion [VER-06].",
+      "cites": [
+        "VER-07",
+        "VER-06"
+      ],
+      "conceded": false
+    },
+    {
+      "side": "bear",
+      "target_side": "bull",
+      "target_index": 0,
+      "response": "While revenue and the order book appear impressive, this growth carries extreme customer concentration risk, as the single European logistics group now accounts for 56% of total revenue, up from 41% a year earlier.",
+      "cites": [
+        "VER-12"
+      ],
+      "conceded": false
+    }
+  ],
+  "judgement": {
+    "verdict": "BUY",
+    "confidence": 0.8,
+    "rationale": "Verdant Mobility demonstrates outstanding growth with revenues surging 94% and a record order book of $3.4 billion [VER-06, VER-07], supported by expanding gross margins and multiple guidance raises [VER-08, VER-09]. The valuation is attractive relative to peers [VER-01] alongside strong analyst backing [VER-02] and high insider ownership [VER-13]. Although customer concentration [VER-12] and rising debt [VER-10] present risks, the strong long-term deployment agreement [VER-07] and financial performance outweigh these concerns.",
+    "deciding_facts": [
+      "VER-06",
+      "VER-07",
+      "VER-08",
+      "VER-01"
+    ],
+    "strongest_bull": 0,
+    "strongest_bear": 0,
+    "scorecard_verdict": "BUY",
+    "cited_fact_ids": [
+      "VER-06",
+      "VER-07",
+      "VER-01",
+      "VER-02",
+      "VER-08",
+      "VER-09",
+      "VER-04",
+      "VER-13",
+      "VER-14",
+      "VER-12",
+      "VER-10",
+      "VER-05",
+      "VER-03"
+    ]
+  },
+  "scorecard": {
+    "bull_total": 15.55,
+    "bear_total": 6.4,
+    "margin": 0.417,
+    "claim_scores": [
+      {
+        "side": "bull",
+        "index": 0,
+        "text": "Revenue surged 94% year over year to $1.12 billion alongside a record order book of $3.4 billion, supported by a five-year deployment agreement with a major European logistics group.",
+        "cites": [
+          "VER-06",
+          "VER-07"
+        ],
+        "base": 5.0,
+        "discount": 0.76,
+        "effective": 3.8
+      },
+      {
+        "side": "bull",
+        "index": 1,
+        "text": "Shares trade at an attractive 3.1 times forward revenue discount compared to the 4.5 times average of high-growth infrastructure peers, with seven of ten analysts rating the stock Buy and a median price target 38% higher than the current price.",
+        "cites": [
+          "VER-01",
+          "VER-02"
+        ],
+        "base": 3.2,
+        "discount": 1.0,
+        "effective": 3.2
+      },
+      {
+        "side": "bull",
+        "index": 2,
+        "text": "Gross margin expanded strongly to 31% from 22% due to falling hardware costs and software subscriptions growing to account for 28% of revenue, leading management to raise full-year revenue guidance twice.",
+        "cites": [
+          "VER-08",
+          "VER-09"
+        ],
+        "base": 4.5,
+        "discount": 1.0,
+        "effective": 4.5
+      },
+      {
+        "side": "bull",
+        "index": 3,
+        "text": "The company possesses proprietary fast-charging technology protected by 23 granted patents that cuts charging time by 40%.",
+        "cites": [
+          "VER-04"
+        ],
+        "base": 1.6,
+        "discount": 1.0,
+        "effective": 1.6
+      },
+      {
+        "side": "bull",
+        "index": 4,
+        "text": "The founder and CEO retains a 24% ownership stake with zero shares sold since listing, while governance is strengthened by the addition of two independent infrastructure finance directors.",
+        "cites": [
+          "VER-13",
+          "VER-14"
+        ],
+        "base": 2.45,
+        "discount": 1.0,
+        "effective": 2.45
+      },
+      {
+        "side": "bear",
+        "index": 0,
+        "text": "The company faces severe customer concentration risk as its largest customer, a European logistics group, accounts for 56% of revenue, up from 41% a year earlier.",
+        "cites": [
+          "VER-12"
+        ],
+        "base": 2.4,
+        "discount": 0.5,
+        "effective": 1.2
+      },
+      {
+        "side": "bear",
+        "index": 1,
+        "text": "Net debt to EBITDA rose to 3.2x at quarter end from 2.4x a year earlier due to borrowings for network expansion.",
+        "cites": [
+          "VER-10"
+        ],
+        "base": 2.0,
+        "discount": 1.0,
+        "effective": 2.0
+      },
+      {
+        "side": "bear",
+        "index": 2,
+        "text": "Pricing pressure is beginning to emerge in core markets following the announcement of rival charging networks by two utility-backed competitors.",
+        "cites": [
+          "VER-05"
+        ],
+        "base": 1.6,
+        "discount": 1.0,
+        "effective": 1.6
+      },
+      {
+        "side": "bear",
+        "index": 3,
+        "text": "An analyst downgraded the stock to Hold in October specifically because of this concentration in a single customer.",
+        "cites": [
+          "VER-03"
+        ],
+        "base": 1.6,
+        "discount": 1.0,
+        "effective": 1.6
+      }
+    ],
+    "credited": {
+      "bull": {
+        "VER-06": 2.5,
+        "VER-07": 2.5,
+        "VER-01": 1.6,
+        "VER-02": 1.6,
+        "VER-08": 2.5,
+        "VER-09": 2.0,
+        "VER-04": 1.6,
+        "VER-13": 1.4,
+        "VER-14": 1.05
+      },
+      "bear": {
+        "VER-12": 2.4,
+        "VER-10": 2.0,
+        "VER-05": 1.6,
+        "VER-03": 1.6
+      }
+    },
+    "rebuttal_effects": [
+      {
+        "rebutting_side": "bull",
+        "target_side": "bear",
+        "target_index": 0,
+        "counter_weight": 5.0,
+        "target_weight": 2.4,
+        "effect": 1.0,
+        "conceded": false
+      },
+      {
+        "rebutting_side": "bear",
+        "target_side": "bull",
+        "target_index": 0,
+        "counter_weight": 2.4,
+        "target_weight": 5.0,
+        "effect": 0.48,
+        "conceded": false
+      }
+    ]
+  },
+  "risk": {
+    "score": 45,
+    "breaches": [
+      {
+        "rule": "customer_concentration_pct",
+        "label": "Largest-customer revenue share",
+        "kind": "limit",
+        "observed": "56%",
+        "limit": "max 50%",
+        "cites": [
+          "VER-12"
+        ]
+      }
+    ],
+    "veto": true,
+    "trigger_reasons": [
+      "Largest-customer revenue share: 56% vs max 50% [VER-12]"
+    ],
+    "narrative": "Verdant Mobility Inc breaches our risk limits due to an over-reliance on a single revenue source, with the largest customer accounting for 56% of total revenue against a maximum threshold of 50% [VER-12]. This severe concentration risk creates significant vulnerability for the portfolio, triggering a mandatory veto by the engine."
+  },
+  "final": {
+    "asset": "Verdant Mobility Inc",
+    "recommendation": "HOLD",
+    "judge_verdict": "BUY",
+    "veto_applied": true,
+    "veto_reasons": [
+      "Largest-customer revenue share: 56% vs max 50% [VER-12]"
+    ]
+  },
+  "audit": [],
+  "transcript": [
+    {
+      "stage": "research",
+      "agent": "Research Agent",
+      "content": "Assembled 14 facts from 14 in the document set."
+    },
+    {
+      "stage": "opening",
+      "agent": "Bull Agent",
+      "content": [
+        {
+          "text": "Revenue surged 94% year over year to $1.12 billion alongside a record order book of $3.4 billion, supported by a five-year deployment agreement with a major European logistics group.",
+          "cites": [
+            "VER-06",
+            "VER-07"
+          ]
+        },
+        {
+          "text": "Shares trade at an attractive 3.1 times forward revenue discount compared to the 4.5 times average of high-growth infrastructure peers, with seven of ten analysts rating the stock Buy and a median price target 38% higher than the current price.",
+          "cites": [
+            "VER-01",
+            "VER-02"
+          ]
+        },
+        {
+          "text": "Gross margin expanded strongly to 31% from 22% due to falling hardware costs and software subscriptions growing to account for 28% of revenue, leading management to raise full-year revenue guidance twice.",
+          "cites": [
+            "VER-08",
+            "VER-09"
+          ]
+        },
+        {
+          "text": "The company possesses proprietary fast-charging technology protected by 23 granted patents that cuts charging time by 40%.",
+          "cites": [
+            "VER-04"
+          ]
+        },
+        {
+          "text": "The founder and CEO retains a 24% ownership stake with zero shares sold since listing, while governance is strengthened by the addition of two independent infrastructure finance directors.",
+          "cites": [
+            "VER-13",
+            "VER-14"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "opening",
+      "agent": "Bear Agent",
+      "content": [
+        {
+          "text": "The company faces severe customer concentration risk as its largest customer, a European logistics group, accounts for 56% of revenue, up from 41% a year earlier.",
+          "cites": [
+            "VER-12"
+          ]
+        },
+        {
+          "text": "Net debt to EBITDA rose to 3.2x at quarter end from 2.4x a year earlier due to borrowings for network expansion.",
+          "cites": [
+            "VER-10"
+          ]
+        },
+        {
+          "text": "Pricing pressure is beginning to emerge in core markets following the announcement of rival charging networks by two utility-backed competitors.",
+          "cites": [
+            "VER-05"
+          ]
+        },
+        {
+          "text": "An analyst downgraded the stock to Hold in October specifically because of this concentration in a single customer.",
+          "cites": [
+            "VER-03"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "rebuttal",
+      "agent": "Bull Agent",
+      "content": {
+        "side": "bull",
+        "target_side": "bear",
+        "target_index": 0,
+        "response": "While customer concentration has increased, this relationship is anchored by a record $3.4 billion order book backed by a five-year deployment agreement [VER-07], which underpins phenomenal 94% year-over-year revenue growth to $1.12 billion [VER-06].",
+        "cites": [
+          "VER-07",
+          "VER-06"
+        ],
+        "conceded": false
+      }
+    },
+    {
+      "stage": "rebuttal",
+      "agent": "Bear Agent",
+      "content": {
+        "side": "bear",
+        "target_side": "bull",
+        "target_index": 0,
+        "response": "While revenue and the order book appear impressive, this growth carries extreme customer concentration risk, as the single European logistics group now accounts for 56% of total revenue, up from 41% a year earlier.",
+        "cites": [
+          "VER-12"
+        ],
+        "conceded": false
+      }
+    },
+    {
+      "stage": "judge",
+      "agent": "Judge Agent",
+      "content": {
+        "verdict": "BUY",
+        "confidence": 0.8,
+        "rationale": "Verdant Mobility demonstrates outstanding growth with revenues surging 94% and a record order book of $3.4 billion [VER-06, VER-07], supported by expanding gross margins and multiple guidance raises [VER-08, VER-09]. The valuation is attractive relative to peers [VER-01] alongside strong analyst backing [VER-02] and high insider ownership [VER-13]. Although customer concentration [VER-12] and rising debt [VER-10] present risks, the strong long-term deployment agreement [VER-07] and financial performance outweigh these concerns.",
+        "deciding_facts": [
+          "VER-06",
+          "VER-07",
+          "VER-08",
+          "VER-01"
+        ],
+        "strongest_bull": 0,
+        "strongest_bear": 0,
+        "scorecard_verdict": "BUY",
+        "cited_fact_ids": [
+          "VER-06",
+          "VER-07",
+          "VER-01",
+          "VER-02",
+          "VER-08",
+          "VER-09",
+          "VER-04",
+          "VER-13",
+          "VER-14",
+          "VER-12",
+          "VER-10",
+          "VER-05",
+          "VER-03"
+        ]
+      }
+    },
+    {
+      "stage": "risk",
+      "agent": "Risk Agent",
+      "content": {
+        "score": 45,
+        "veto": true,
+        "reasons": [
+          "Largest-customer revenue share: 56% vs max 50% [VER-12]"
+        ]
+      }
+    },
+    {
+      "stage": "decision",
+      "agent": "Committee",
+      "content": {
+        "asset": "Verdant Mobility Inc",
+        "recommendation": "HOLD",
+        "judge_verdict": "BUY",
+        "veto_applied": true,
+        "veto_reasons": [
+          "Largest-customer revenue share: 56% vs max 50% [VER-12]"
+        ]
+      }
+    }
+  ]
+}

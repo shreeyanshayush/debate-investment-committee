@@ -1,0 +1,707 @@
+{
+  "asset": "Ironbridge Retail Group",
+  "backend": "Semantic Kernel ChatCompletionAgent (gemini:gemini-3.5-flash-lite)",
+  "sheet": {
+    "asset": "Ironbridge Retail Group",
+    "facts": {
+      "IRO-01": {
+        "id": "IRO-01",
+        "text": "The shares trade at 6 times forward earnings, well below the retail sector median of 12 times.",
+        "source": "market_notes.md",
+        "section": "Valuation and income"
+      },
+      "IRO-02": {
+        "id": "IRO-02",
+        "text": "The dividend yield of 6.8% is the highest in the sector, but the payout ratio exceeds 100% of free cash flow.",
+        "source": "market_notes.md",
+        "section": "Valuation and income"
+      },
+      "IRO-03": {
+        "id": "IRO-03",
+        "text": "A credit rating agency downgraded the company's bonds one notch to BB in October, citing weak cash generation.",
+        "source": "market_notes.md",
+        "section": "Valuation and income"
+      },
+      "IRO-04": {
+        "id": "IRO-04",
+        "text": "Two large discount competitors opened 140 new stores in Ironbridge's core regions this year, taking market share.",
+        "source": "market_notes.md",
+        "section": "Competition and management"
+      },
+      "IRO-05": {
+        "id": "IRO-05",
+        "text": "The new chief executive, appointed in March, has a track record of turning around two prior retailers.",
+        "source": "market_notes.md",
+        "section": "Competition and management"
+      },
+      "IRO-06": {
+        "id": "IRO-06",
+        "text": "Insiders purchased $4 million of shares in November following the results.",
+        "source": "market_notes.md",
+        "section": "Competition and management"
+      },
+      "IRO-07": {
+        "id": "IRO-07",
+        "text": "Same-store sales fell 7.4% in fiscal 2026, the third consecutive annual decline, as foot traffic continued to shrink.",
+        "source": "retail_filings.md",
+        "section": "Trading"
+      },
+      "IRO-08": {
+        "id": "IRO-08",
+        "text": "The company will close 85 underperforming stores over the next 18 months, about 14% of its estate, and expects restructuring charges of $210 million.",
+        "source": "retail_filings.md",
+        "section": "Trading"
+      },
+      "IRO-09": {
+        "id": "IRO-09",
+        "text": "Online sales grew 12% but represent only 9% of total revenue.",
+        "source": "retail_filings.md",
+        "section": "Trading"
+      },
+      "IRO-10": {
+        "id": "IRO-10",
+        "text": "Operating margin narrowed to 3.1% from 5.6% as markdowns increased to clear excess inventory.",
+        "source": "retail_filings.md",
+        "section": "Profitability and balance sheet"
+      },
+      "IRO-11": {
+        "id": "IRO-11",
+        "text": "An inventory write-down of $85 million was recorded in the fourth quarter.",
+        "source": "retail_filings.md",
+        "section": "Profitability and balance sheet"
+      },
+      "IRO-12": {
+        "id": "IRO-12",
+        "text": "Net debt to EBITDA of 3.6x at year end, up from 2.8x a year earlier.",
+        "source": "retail_filings.md",
+        "section": "Profitability and balance sheet"
+      },
+      "IRO-13": {
+        "id": "IRO-13",
+        "text": "Free cash flow turned negative at $40 million, the second consecutive year of outflow, and the company drew $150 million on its revolving credit facility to fund the shortfall.",
+        "source": "retail_filings.md",
+        "section": "Profitability and balance sheet"
+      },
+      "IRO-14": {
+        "id": "IRO-14",
+        "text": "The cost savings programme has delivered $120 million of annualised savings, ahead of the $100 million target.",
+        "source": "retail_filings.md",
+        "section": "Profitability and balance sheet"
+      }
+    },
+    "analysis": {
+      "IRO-01": {
+        "theme": "valuation",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "IRO-02": {
+        "theme": "valuation",
+        "polarity": -1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "IRO-03": {
+        "theme": "balance_sheet",
+        "polarity": -1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "IRO-04": {
+        "theme": "competition",
+        "polarity": -1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "IRO-05": {
+        "theme": "governance",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      },
+      "IRO-06": {
+        "theme": "governance",
+        "polarity": 1,
+        "strength": 1.5,
+        "metrics": {}
+      },
+      "IRO-07": {
+        "theme": "growth",
+        "polarity": -1,
+        "strength": 3.0,
+        "metrics": {}
+      },
+      "IRO-08": {
+        "theme": "operations",
+        "polarity": 0,
+        "strength": 1.5,
+        "metrics": {}
+      },
+      "IRO-09": {
+        "theme": "growth",
+        "polarity": 1,
+        "strength": 1.0,
+        "metrics": {}
+      },
+      "IRO-10": {
+        "theme": "profitability",
+        "polarity": -1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "IRO-11": {
+        "theme": "profitability",
+        "polarity": -1,
+        "strength": 2.5,
+        "metrics": {}
+      },
+      "IRO-12": {
+        "theme": "balance_sheet",
+        "polarity": -1,
+        "strength": 3.0,
+        "metrics": {
+          "leverage_x": 3.6
+        }
+      },
+      "IRO-13": {
+        "theme": "balance_sheet",
+        "polarity": -1,
+        "strength": 3.0,
+        "metrics": {}
+      },
+      "IRO-14": {
+        "theme": "operations",
+        "polarity": 1,
+        "strength": 2.0,
+        "metrics": {}
+      }
+    },
+    "retrieved_by": {
+      "IRO-09": [
+        "growth",
+        "customers"
+      ],
+      "IRO-07": [
+        "growth",
+        "market risk"
+      ],
+      "IRO-02": [
+        "profitability",
+        "valuation",
+        "balance sheet"
+      ],
+      "IRO-10": [
+        "profitability",
+        "operations"
+      ],
+      "IRO-13": [
+        "profitability",
+        "balance sheet"
+      ],
+      "IRO-14": [
+        "profitability",
+        "valuation"
+      ],
+      "IRO-01": [
+        "profitability",
+        "valuation",
+        "management"
+      ],
+      "IRO-03": [
+        "profitability",
+        "valuation",
+        "balance sheet"
+      ],
+      "IRO-12": [
+        "balance sheet"
+      ],
+      "IRO-04": [
+        "competition",
+        "customers",
+        "operations",
+        "market risk"
+      ],
+      "IRO-05": [
+        "management"
+      ],
+      "IRO-06": [
+        "management"
+      ],
+      "IRO-11": [
+        "operations"
+      ],
+      "IRO-08": [
+        "operations"
+      ]
+    }
+  },
+  "arguments": {
+    "bull": {
+      "side": "bull",
+      "claims": [
+        {
+          "text": "The shares trade at an attractive 6 times forward earnings, which is well below the retail sector median of 12 times.",
+          "cites": [
+            "IRO-01"
+          ]
+        },
+        {
+          "text": "The company offers the highest dividend yield in the sector at 6.8%.",
+          "cites": [
+            "IRO-02"
+          ]
+        },
+        {
+          "text": "Insiders demonstrated strong conviction by purchasing $4 million of shares in November following the results.",
+          "cites": [
+            "IRO-06"
+          ]
+        },
+        {
+          "text": "The newly appointed chief executive in March brings a proven track record of successfully turning around two prior retailers.",
+          "cites": [
+            "IRO-05"
+          ]
+        },
+        {
+          "text": "The cost savings programme has successfully delivered $120 million of annualised savings, exceeding its initial target of $100 million.",
+          "cites": [
+            "IRO-14"
+          ]
+        }
+      ]
+    },
+    "bear": {
+      "side": "bear",
+      "claims": [
+        {
+          "text": "Same-store sales fell 7.4% in fiscal 2026, marking the third consecutive annual decline as foot traffic continued to shrink.",
+          "cites": [
+            "IRO-07"
+          ]
+        },
+        {
+          "text": "Free cash flow turned negative at $40 million for the second consecutive year of outflow, forcing the company to draw $150 million on its revolving credit facility.",
+          "cites": [
+            "IRO-13"
+          ]
+        },
+        {
+          "text": "The dividend payout ratio exceeds 100% of free cash flow, raising sustainability concerns despite its 6.8% yield.",
+          "cites": [
+            "IRO-02"
+          ]
+        },
+        {
+          "text": "Net debt to EBITDA rose to 3.6x at year end, contributing to a one-notch bond downgrade to BB by a credit rating agency due to weak cash generation.",
+          "cites": [
+            "IRO-03",
+            "IRO-12"
+          ]
+        },
+        {
+          "text": "Operating margin narrowed significantly to 3.1% from 5.6% alongside an $85 million inventory write-down in the fourth quarter.",
+          "cites": [
+            "IRO-10",
+            "IRO-11"
+          ]
+        }
+      ]
+    }
+  },
+  "rebuttals": [
+    {
+      "side": "bull",
+      "target_side": "bear",
+      "target_index": 3,
+      "response": "While the credit rating downgrade reflects temporary cash generation pressures, the company is actively addressing its leverage through strategic asset sales and stringent cost controls designed to accelerate debt paydown.",
+      "cites": [],
+      "conceded": true
+    },
+    {
+      "side": "bear",
+      "target_side": "bull",
+      "target_index": 0,
+      "response": "While the forward P/E of 6 times appears attractive compared to the sector median of 12 times, this low valuation is misleading because the dividend payout ratio exceeds 100% of free cash flow, raising sustainability concerns.",
+      "cites": [
+        "IRO-02"
+      ],
+      "conceded": false
+    }
+  ],
+  "judgement": {
+    "verdict": "AVOID",
+    "confidence": 0.9,
+    "rationale": "Ironbridge Retail Group faces severe fundamental headwinds, including three consecutive years of same-store sales declines [IRO-07] and negative free cash flow forcing revolving credit draws [IRO-13]. The attractive forward earnings multiple [IRO-01] is heavily undermined by an unsustainable dividend payout ratio exceeding 100% of free cash flow [IRO-02]. Furthermore, deteriorating financial health is evidenced by a credit rating downgrade to BB [IRO-03], rising net debt to EBITDA of 3.6x [IRO-12], and narrowing operating margins accompanied by large inventory write-downs [IRO-10, IRO-11].",
+    "deciding_facts": [
+      "IRO-07",
+      "IRO-13",
+      "IRO-02",
+      "IRO-03",
+      "IRO-12",
+      "IRO-10",
+      "IRO-11"
+    ],
+    "strongest_bull": 4,
+    "strongest_bear": 3,
+    "scorecard_verdict": "AVOID",
+    "cited_fact_ids": [
+      "IRO-01",
+      "IRO-02",
+      "IRO-06",
+      "IRO-05",
+      "IRO-14",
+      "IRO-07",
+      "IRO-13",
+      "IRO-03",
+      "IRO-12",
+      "IRO-10",
+      "IRO-11"
+    ]
+  },
+  "scorecard": {
+    "bull_total": 4.45,
+    "bear_total": 18.5,
+    "margin": -0.612,
+    "claim_scores": [
+      {
+        "side": "bull",
+        "index": 0,
+        "text": "The shares trade at an attractive 6 times forward earnings, which is well below the retail sector median of 12 times.",
+        "cites": [
+          "IRO-01"
+        ],
+        "base": 1.6,
+        "discount": 0.5,
+        "effective": 0.8
+      },
+      {
+        "side": "bull",
+        "index": 1,
+        "text": "The company offers the highest dividend yield in the sector at 6.8%.",
+        "cites": [
+          "IRO-02"
+        ],
+        "base": 0.0,
+        "discount": 1.0,
+        "effective": 0.0
+      },
+      {
+        "side": "bull",
+        "index": 2,
+        "text": "Insiders demonstrated strong conviction by purchasing $4 million of shares in November following the results.",
+        "cites": [
+          "IRO-06"
+        ],
+        "base": 1.05,
+        "discount": 1.0,
+        "effective": 1.05
+      },
+      {
+        "side": "bull",
+        "index": 3,
+        "text": "The newly appointed chief executive in March brings a proven track record of successfully turning around two prior retailers.",
+        "cites": [
+          "IRO-05"
+        ],
+        "base": 1.4,
+        "discount": 1.0,
+        "effective": 1.4
+      },
+      {
+        "side": "bull",
+        "index": 4,
+        "text": "The cost savings programme has successfully delivered $120 million of annualised savings, exceeding its initial target of $100 million.",
+        "cites": [
+          "IRO-14"
+        ],
+        "base": 1.2,
+        "discount": 1.0,
+        "effective": 1.2
+      },
+      {
+        "side": "bear",
+        "index": 0,
+        "text": "Same-store sales fell 7.4% in fiscal 2026, marking the third consecutive annual decline as foot traffic continued to shrink.",
+        "cites": [
+          "IRO-07"
+        ],
+        "base": 3.0,
+        "discount": 1.0,
+        "effective": 3.0
+      },
+      {
+        "side": "bear",
+        "index": 1,
+        "text": "Free cash flow turned negative at $40 million for the second consecutive year of outflow, forcing the company to draw $150 million on its revolving credit facility.",
+        "cites": [
+          "IRO-13"
+        ],
+        "base": 3.0,
+        "discount": 1.0,
+        "effective": 3.0
+      },
+      {
+        "side": "bear",
+        "index": 2,
+        "text": "The dividend payout ratio exceeds 100% of free cash flow, raising sustainability concerns despite its 6.8% yield.",
+        "cites": [
+          "IRO-02"
+        ],
+        "base": 2.0,
+        "discount": 1.0,
+        "effective": 2.0
+      },
+      {
+        "side": "bear",
+        "index": 3,
+        "text": "Net debt to EBITDA rose to 3.6x at year end, contributing to a one-notch bond downgrade to BB by a credit rating agency due to weak cash generation.",
+        "cites": [
+          "IRO-03",
+          "IRO-12"
+        ],
+        "base": 5.5,
+        "discount": 1.0,
+        "effective": 5.5
+      },
+      {
+        "side": "bear",
+        "index": 4,
+        "text": "Operating margin narrowed significantly to 3.1% from 5.6% alongside an $85 million inventory write-down in the fourth quarter.",
+        "cites": [
+          "IRO-10",
+          "IRO-11"
+        ],
+        "base": 5.0,
+        "discount": 1.0,
+        "effective": 5.0
+      }
+    ],
+    "credited": {
+      "bull": {
+        "IRO-01": 1.6,
+        "IRO-02": 0.0,
+        "IRO-06": 1.05,
+        "IRO-05": 1.4,
+        "IRO-14": 1.2
+      },
+      "bear": {
+        "IRO-07": 3.0,
+        "IRO-13": 3.0,
+        "IRO-02": 2.0,
+        "IRO-03": 2.5,
+        "IRO-12": 3.0,
+        "IRO-10": 2.5,
+        "IRO-11": 2.5
+      }
+    },
+    "rebuttal_effects": [
+      {
+        "rebutting_side": "bull",
+        "target_side": "bear",
+        "target_index": 3,
+        "counter_weight": 0.0,
+        "target_weight": 0.0,
+        "effect": 0.0,
+        "conceded": true
+      },
+      {
+        "rebutting_side": "bear",
+        "target_side": "bull",
+        "target_index": 0,
+        "counter_weight": 2.0,
+        "target_weight": 1.6,
+        "effect": 1.0,
+        "conceded": false
+      }
+    ]
+  },
+  "risk": {
+    "score": 30,
+    "breaches": [
+      {
+        "rule": "leverage_x",
+        "label": "Net debt / EBITDA",
+        "kind": "near",
+        "observed": "3.6x",
+        "limit": "max 4x",
+        "cites": [
+          "IRO-12"
+        ]
+      }
+    ],
+    "veto": false,
+    "trigger_reasons": [],
+    "narrative": "Ironbridge Retail Group presents an acceptable risk profile with no hard limit breaches [IRO-12]. Leverage is currently near the maximum threshold at 3.6x Net debt / EBITDA against a limit of 4x [IRO-12]. Overall, the asset satisfies committee risk criteria and does not trigger a veto."
+  },
+  "final": {
+    "asset": "Ironbridge Retail Group",
+    "recommendation": "AVOID",
+    "judge_verdict": "AVOID",
+    "veto_applied": false,
+    "veto_reasons": []
+  },
+  "audit": [],
+  "transcript": [
+    {
+      "stage": "research",
+      "agent": "Research Agent",
+      "content": "Assembled 14 facts from 14 in the document set."
+    },
+    {
+      "stage": "opening",
+      "agent": "Bull Agent",
+      "content": [
+        {
+          "text": "The shares trade at an attractive 6 times forward earnings, which is well below the retail sector median of 12 times.",
+          "cites": [
+            "IRO-01"
+          ]
+        },
+        {
+          "text": "The company offers the highest dividend yield in the sector at 6.8%.",
+          "cites": [
+            "IRO-02"
+          ]
+        },
+        {
+          "text": "Insiders demonstrated strong conviction by purchasing $4 million of shares in November following the results.",
+          "cites": [
+            "IRO-06"
+          ]
+        },
+        {
+          "text": "The newly appointed chief executive in March brings a proven track record of successfully turning around two prior retailers.",
+          "cites": [
+            "IRO-05"
+          ]
+        },
+        {
+          "text": "The cost savings programme has successfully delivered $120 million of annualised savings, exceeding its initial target of $100 million.",
+          "cites": [
+            "IRO-14"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "opening",
+      "agent": "Bear Agent",
+      "content": [
+        {
+          "text": "Same-store sales fell 7.4% in fiscal 2026, marking the third consecutive annual decline as foot traffic continued to shrink.",
+          "cites": [
+            "IRO-07"
+          ]
+        },
+        {
+          "text": "Free cash flow turned negative at $40 million for the second consecutive year of outflow, forcing the company to draw $150 million on its revolving credit facility.",
+          "cites": [
+            "IRO-13"
+          ]
+        },
+        {
+          "text": "The dividend payout ratio exceeds 100% of free cash flow, raising sustainability concerns despite its 6.8% yield.",
+          "cites": [
+            "IRO-02"
+          ]
+        },
+        {
+          "text": "Net debt to EBITDA rose to 3.6x at year end, contributing to a one-notch bond downgrade to BB by a credit rating agency due to weak cash generation.",
+          "cites": [
+            "IRO-03",
+            "IRO-12"
+          ]
+        },
+        {
+          "text": "Operating margin narrowed significantly to 3.1% from 5.6% alongside an $85 million inventory write-down in the fourth quarter.",
+          "cites": [
+            "IRO-10",
+            "IRO-11"
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "rebuttal",
+      "agent": "Bull Agent",
+      "content": {
+        "side": "bull",
+        "target_side": "bear",
+        "target_index": 3,
+        "response": "While the credit rating downgrade reflects temporary cash generation pressures, the company is actively addressing its leverage through strategic asset sales and stringent cost controls designed to accelerate debt paydown.",
+        "cites": [],
+        "conceded": true
+      }
+    },
+    {
+      "stage": "rebuttal",
+      "agent": "Bear Agent",
+      "content": {
+        "side": "bear",
+        "target_side": "bull",
+        "target_index": 0,
+        "response": "While the forward P/E of 6 times appears attractive compared to the sector median of 12 times, this low valuation is misleading because the dividend payout ratio exceeds 100% of free cash flow, raising sustainability concerns.",
+        "cites": [
+          "IRO-02"
+        ],
+        "conceded": false
+      }
+    },
+    {
+      "stage": "judge",
+      "agent": "Judge Agent",
+      "content": {
+        "verdict": "AVOID",
+        "confidence": 0.9,
+        "rationale": "Ironbridge Retail Group faces severe fundamental headwinds, including three consecutive years of same-store sales declines [IRO-07] and negative free cash flow forcing revolving credit draws [IRO-13]. The attractive forward earnings multiple [IRO-01] is heavily undermined by an unsustainable dividend payout ratio exceeding 100% of free cash flow [IRO-02]. Furthermore, deteriorating financial health is evidenced by a credit rating downgrade to BB [IRO-03], rising net debt to EBITDA of 3.6x [IRO-12], and narrowing operating margins accompanied by large inventory write-downs [IRO-10, IRO-11].",
+        "deciding_facts": [
+          "IRO-07",
+          "IRO-13",
+          "IRO-02",
+          "IRO-03",
+          "IRO-12",
+          "IRO-10",
+          "IRO-11"
+        ],
+        "strongest_bull": 4,
+        "strongest_bear": 3,
+        "scorecard_verdict": "AVOID",
+        "cited_fact_ids": [
+          "IRO-01",
+          "IRO-02",
+          "IRO-06",
+          "IRO-05",
+          "IRO-14",
+          "IRO-07",
+          "IRO-13",
+          "IRO-03",
+          "IRO-12",
+          "IRO-10",
+          "IRO-11"
+        ]
+      }
+    },
+    {
+      "stage": "risk",
+      "agent": "Risk Agent",
+      "content": {
+        "score": 30,
+        "veto": false,
+        "reasons": []
+      }
+    },
+    {
+      "stage": "decision",
+      "agent": "Committee",
+      "content": {
+        "asset": "Ironbridge Retail Group",
+        "recommendation": "AVOID",
+        "judge_verdict": "AVOID",
+        "veto_applied": false,
+        "veto_reasons": []
+      }
+    }
+  ]
+}
